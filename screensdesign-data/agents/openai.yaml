@@ -1,0 +1,14 @@
+interface:
+  display_name: "ScreensDesign Data"
+  short_description: "Research apps, replay screens, paywalls, and App Store screenshots"
+  brand_color: "#0A84FF"
+  default_prompt: "Use $screensdesign-data to find Health & Fitness apps over $50k monthly revenue with quiz onboarding, then open the replay PDF for the strongest one."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "screensdesign"
+      description: "Hosted ScreensDesign MCP server authenticated with OAuth browser login"
+
+policy:
+  allow_implicit_invocation: true
