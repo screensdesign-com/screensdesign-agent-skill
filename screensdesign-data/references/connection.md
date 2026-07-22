@@ -8,6 +8,14 @@ https://api.screensdesign.com/v1/mcp
 
 Server name convention: `screensdesign`. Scope: `mcp:read` (read-only; there are no write tools).
 
+The authenticated user must remain an active member of the selected organization. Production access may also require an active ScreensDesign Pro subscription.
+
+## Contents
+
+- [OAuth](#oauth-preferred)
+- [API key fallback](#api-key-fallback)
+- [Troubleshooting](#troubleshooting)
+
 ## OAuth (Preferred)
 
 OAuth 2.1 browser login is the preferred connection method. Clients that support MCP OAuth only need the URL: protected-resource discovery, authorization-server metadata, and dynamic client registration are automatic. When the client prompts, the user approves ScreensDesign in the browser.
@@ -96,8 +104,9 @@ Generic MCP client:
 
 ## Troubleshooting
 
-- HTTP 401 with `{"detail": "..."}`: no or invalid credentials. Complete the OAuth browser login, or check that the `sd_key_` is active and unexpired. The 401 response's `WWW-Authenticate` header carries the OAuth resource-metadata URL for discovery.
+- HTTP 401 with `{"detail": "..."}`: credentials may be missing/invalid, the token may lack `mcp:read`, organization membership may be inactive, or Pro access may be required. The `WWW-Authenticate` header carries the OAuth resource-metadata URL for discovery.
+- HTTP 429: wait for the number of seconds in `Retry-After` before retrying.
 - Tools not visible after adding the server: the client usually needs a new session or an MCP restart/refresh.
 - The server is stateless; each request authenticates independently, so there is no session to resume after token expiry — the client re-runs OAuth automatically or keeps using the API key.
-- Verify the connection by calling `describe_screensdesign_mcp`; it echoes the authenticated key prefix, user, organization, scopes, and auth method.
+- Verify the connection by calling `describe_screensdesign_mcp`; it reports the current schema version, tool surface, scopes, and authentication method.
 - Never print tokens, API keys, authorization codes, callback URLs, or refresh tokens in output.

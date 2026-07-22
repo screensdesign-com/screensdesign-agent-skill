@@ -1,85 +1,51 @@
 ---
 name: screensdesign-data
-version: 2026-07-10.agent-guide.1
-description: Use ScreensDesign mobile app design research through the ScreensDesign MCP tools - a searchable iOS app database with revenue/downloads, full replay screen recordings, App Store screenshots, semantic screen search, app intelligence classification, and replay-screen PDF contact sheets. Trigger when a user asks for app design research, onboarding flow examples, paywall examples, UI/screen references, App Store screenshot research, competitor app teardowns, revenue-filtered app discovery, app intelligence filters (target audience, buildability, gamification, onboarding steps, paywall counts), replay PDFs, or saved ScreensDesign research.
+description: "Research iOS app design with the ScreensDesign MCP tools: discover apps by market metrics and AI classifications, inspect latest replay flows through paginated thumbnails and timestamped links, semantically search replay screens, analyze OCR and UI metadata, discover App Store screenshot metadata, compare developers, and read saved research. Use for competitor teardowns, onboarding or paywall research, UI references, revenue-filtered app discovery, app intelligence filters, replay-flow analysis, or saved ScreensDesign research."
 ---
 
 # ScreensDesign Data
 
-Use ScreensDesign for iOS app discovery, competitor teardowns, replay screen research (onboarding, paywalls, in-app UI), App Store screenshot research, structured app intelligence filtering, replay PDF contact sheets, and saved research.
+Use ScreensDesign for read-only iOS app discovery, competitor research, replay-flow analysis, semantic UI search, App Store screenshot metadata, structured app intelligence, and saved research.
 
 ## Load Only What You Need
 
-This skill uses progressive disclosure. Read the focused file that matches the request:
-
 | User intent | Read |
 |-------------|------|
-| Find apps, competitors, revenue-filtered markets, developers, categories, or resolve a pasted URL | `workflows/app-research.md` |
-| Research replay screens, onboarding flows, paywalls, UI patterns, replay PDFs, or App Store screenshots | `workflows/screen-research.md` |
-| Filter apps by target audience, buildability, gamification, onboarding steps, paywall counts, or detected patterns | `workflows/app-intelligence.md` |
-| Read the user's collections, saved groups, saved replay points, or saved store screens | `workflows/saved-research.md` |
-| Decide what to suggest after completing a research task | `workflows/completion-followups.md` |
-| Need the full tool list with exact parameters | `references/tools.md` |
-| Need returned field names or payload shapes | `references/response-fields.md` |
-| Need connection/auth setup details | `references/connection.md` |
+| Find apps, competitors, revenue bands, developers, categories, or resolve a pasted URL | `workflows/app-research.md` |
+| Inspect replay flows, onboarding, paywalls, UI patterns, similar screens, or store-screen metadata | `workflows/screen-research.md` |
+| Filter by audience, buildability, scores, onboarding steps, paywalls, quiz length, or detected patterns | `workflows/app-intelligence.md` |
+| Read collections, saved groups, saved replay points, or saved store screens | `workflows/saved-research.md` |
+| Suggest useful follow-up research | `workflows/completion-followups.md` |
+| Need stable tool-choice or payload guidance | `references/tools.md` and `references/response-fields.md` |
+| Need connection or authentication help | `references/connection.md` |
 
-Prefer live schema tools when MCP is connected: `describe_screensdesign_mcp` for the current tool surface and authenticated account, `describe_app_intelligence_schema` for current app-context fields, enum values, and pattern flags. If the live tool output disagrees with local docs, follow the live tool output.
+Use the live MCP input schemas for exact parameters and enums. Call `describe_screensdesign_mcp` for the current capability contract and `describe_app_intelligence_schema` for supported intelligence fields, enum values, scores, booleans, and pattern flags. If local guidance conflicts with live output, follow the live output.
 
-## Core Rules
+## Core Workflow
 
-1. Use MCP tools when available. The server is read-only (`mcp:read`); never promise saving or writing through it.
-2. Never print OAuth tokens, API keys, authorization codes, callback URLs, or refresh tokens.
-3. Use `resolve_app_link` first when the user pastes a ScreensDesign, App Store, or replay PDF URL, slug, store id, or bundle.
-4. Use `list_research_apps` or `search_apps` for discovery; `list_research_apps` returns richer research payloads with `public_links` and `internal_refs`.
-5. Use `search_app_intelligence` for structured app-context filters and onboarding/paywall counts; keep free text out of typed filters.
-6. Use `search_screens` for replay UI research: `search_mode="text"` for OCR/exact wording, `search_mode="semantic"` for concepts. Use `search_store_screens` for App Store screenshots.
-7. `app_screen_pdf` and `screen_pdf_detail` return a PDF ResourceLink plus a `screen_index` manifest. Open the PDF first for the visual flow, then call `screen_detail` on interesting `screen_id`s for OCR, metadata, and assets.
-8. Present public links (`web_url`, `appstore_url`, `public_links.latest_replay_pdf`), timestamps, visible text, and OCR snippets to users. Keep `internal_refs` ids for follow-up calls; do not show raw ids unless asked.
-9. Treat revenue and download figures as estimates, and AI classifications/patterns as signals, unless the response says otherwise.
-10. Finish useful research by suggesting 2-3 adaptive next actions; read `workflows/completion-followups.md` for the decision pattern.
+1. Use `resolve_app_link` first for a pasted ScreensDesign URL, App Store URL, slug, store id, bundle, or app id.
+2. Use `list_research_apps` for rich candidate records and `search_apps` for unified metadata, metric, and structured-intelligence filtering.
+3. Use `app_detail` for app-level context. It does not return replay screens or visual assets.
+4. Use `app_screens` to inspect the selected app's latest replay in timestamp order. Follow `pagination.next_offset` until `has_more=false` when the full flow matters.
+5. Use `search_screens` for semantic concept search. It has no text/OCR mode, `search_mode` argument, or `vector_scope` argument.
+6. Use `screen_detail` for complete text-only OCR and analysis of a selected screen. Use `find_similar_screens` for visual-neighbor discovery.
+7. Use `search_store_screens` only for App Store screenshot metadata; it does not return screenshot images.
+8. Use `list_collections` and `search_saved_research` for saved research. The server has no write tools.
 
-## Hosted MCP Setup
+## Visual And Privacy Boundary
 
-Use the hosted Streamable HTTP MCP server:
+- Only `app_screens` returns visual content: optional inline thumbnail `ImageContent` plus `thumbnail_url` in structured content.
+- Treat each `app_screens` ResourceLink as an HTML detail page at the screen timestamp, not as the thumbnail image.
+- No hosted tool returns replay videos, original images, full processed screens, PDFs, or downloadable flow documents.
+- Other screen tools are text or metadata only. Do not promise image URLs from `screen_detail`, `search_screens`, `find_similar_screens`, `search_store_screens`, `app_detail`, or saved research.
+- Never print OAuth tokens, API keys, authorization codes, callback URLs, or refresh tokens.
 
-```text
-https://api.screensdesign.com/v1/mcp
-```
+## Output
 
-Install or update this skill:
+Present public app links, timestamped `frontend_url` links, available thumbnails, timestamps, visible text, and OCR excerpts. Keep internal ids for follow-up calls and omit them from prose unless requested. Treat revenue/download estimates and AI classifications or pattern flags as signals, then verify important claims against replay evidence.
 
-```bash
-npx -y skills add hashtagfox/screensdesign-agent-skill
-```
+Finish useful research with 2-3 adaptive next actions from `workflows/completion-followups.md`.
 
-Claude Code:
+## Connection
 
-```bash
-npx -y skills add hashtagfox/screensdesign-agent-skill
-claude mcp add --transport http screensdesign "https://api.screensdesign.com/v1/mcp" --scope user
-claude mcp login screensdesign
-```
-
-Codex:
-
-```bash
-npx -y skills add hashtagfox/screensdesign-agent-skill
-codex mcp add screensdesign --url 'https://api.screensdesign.com/v1/mcp'
-codex mcp login screensdesign
-```
-
-Cursor:
-
-```json
-{
-  "mcpServers": {
-    "screensdesign": {
-      "url": "https://api.screensdesign.com/v1/mcp"
-    }
-  }
-}
-```
-
-Other MCP clients: configure a remote Streamable HTTP MCP server named `screensdesign` at the hosted MCP URL above, then use the client OAuth/browser-login flow if supported. OAuth 2.1 discovery and dynamic client registration are automatic. For clients without OAuth support, use a developer API key (`sd_key_...`) from `https://screensdesign.com/mcp/keys` as `Authorization: Bearer`; see `references/connection.md`.
-
-If MCP tools do not reload in the current session after setup, ask the user to open a new session or restart/refresh the MCP client.
+If the MCP dependency is unavailable or authentication fails, read `references/connection.md`. A client may need a new session or MCP refresh after configuration.

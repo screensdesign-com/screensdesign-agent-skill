@@ -1,49 +1,32 @@
 # App Research Workflow
 
-Use this workflow for app discovery, competitor discovery, revenue-banded markets, pasted URLs, app detail, developers, and categories.
+Use this workflow for app discovery, competitor discovery, revenue bands, pasted URLs, app context, developers, and categories.
 
-## Tool Choice
+## Choose The App Tool
 
-- Use `resolve_app_link` first when the user pastes a ScreensDesign URL, App Store URL, replay PDF URL, slug, store id, or bundle. It returns app metadata plus `internal_refs` for follow-up calls.
-- Use `list_research_apps` for research-grade discovery. It returns compact app candidates with App Store descriptions, AI-enhanced descriptions, classification, `public_links`, `internal_refs`, and a `replay_summary` with the latest video, onboarding step count, and paywall type.
-- Use `search_apps` for a lighter app list when the research payload is unnecessary.
-- Use `app_detail` after an app is selected. It returns full metadata, monthly `revenue_list`, a `reviews_sample`, replay videos, latest replay screens, and current store screenshots.
-- Use `search_developers` for publisher/portfolio research and `list_categories` to discover valid category names with app counts.
-- Use `describe_screensdesign_mcp` when unsure about the current tool surface.
+- Use `resolve_app_link` first for a pasted ScreensDesign URL, App Store URL, slug, store id, bundle, or app id.
+- Use `list_research_apps` for rich candidates with descriptions, classifications, replay summaries, public links, and internal refs.
+- Use `search_apps` for unified metadata, metric, and structured-intelligence filtering.
+- Use `app_detail` after selecting an app for revenue history, reviews, latest-replay summary, video metadata, and store-screen metadata. It returns no replay screens or visuals.
+- Use `search_developers` for publisher and portfolio research.
+- Read category values from the live input schema; common aliases and legacy codes are normalized by the server.
 
-## Revenue And Market Filters
+## Market Filters
 
-For requests such as "apps doing 20k a month with replays":
+Treat revenue and downloads as monthly estimates. Translate fuzzy requests into explicit ranges and report the range used. Add `has_replays=true` when the user needs replay evidence and `has_store_screens=true` when store-screen records matter.
 
-- Use `min_revenue` and `max_revenue` (monthly USD estimates).
-- For "around 20k", start with `min_revenue=15000` and `max_revenue=30000`.
-- For "20k+", use `min_revenue=20000`.
-- For smaller-app research, add an upper bound so results do not drift toward category leaders.
-- `min_downloads`/`max_downloads` and `min_rating`/`max_rating` work the same way.
-- Use `has_replays=true` when the user needs replay recordings, `has_store_screens=true` for App Store screenshots, and `has_pdf=true` (list_research_apps only) when a ready replay PDF matters.
-- `sort` accepts `revenue` (default), `downloads`, `updated`, `released`, `rating`, and `name`.
+Use the live schema for exact filter and sort values. Do not inspect credentials or local application configuration to invent hidden options.
 
-Do not inspect local config files or credentials to discover hidden API options. Use `describe_screensdesign_mcp`, `describe_app_intelligence_schema`, and documented filters.
+## Drill Into A Shortlist
 
-## App-To-Screen Drilldown
-
-When app search identifies interesting apps:
-
-1. Use `app_detail` on selected apps for context, revenue history, videos, and sample screens.
-2. Use `app_screen_pdf` or `list_app_screen_pdfs` for the replay contact sheet; open the PDF for the full visual flow.
-3. Use `search_screens` with `app_ids` to find specific replay screens (paywalls, quiz steps, settings) inside selected apps.
-4. Use `search_store_screens` with `app_ids` to compare App Store marketing screenshots.
-5. Use `search_app_intelligence` with `app_ids` when structured classification for the selected set matters.
-
-Read `workflows/screen-research.md` before deep screen or PDF work.
+1. Call `app_detail` for app-level context.
+2. Call `app_screens` for the strongest apps and paginate through the latest replay when sequence matters.
+3. Call `search_screens` with `app_ids` for semantic discovery of specific concepts across the shortlist.
+4. Call `screen_detail` on important ids for complete OCR and UI analysis.
+5. Call `search_store_screens` only for store-screen metadata such as order and dimensions.
 
 ## Output
 
-Lead with the scope and result count. Include the filters used, especially category/revenue/replay constraints. Prefer compact tables for app comparisons with revenue, downloads, rating, and one-line positioning from `enhanced_description.one_liner`. Show `web_url` and `appstore_url` links; keep `internal_refs` ids out of user-facing text unless asked.
+Lead with the scope, result count, and filters used. Compare apps with revenue, downloads, rating, positioning, classifications, and public links. Keep internal ids out of prose unless requested.
 
-Useful next actions often include:
-
-- open the replay PDF for the top apps
-- search paywall or onboarding screens inside the selected apps
-- compare App Store screenshots across the shortlist
-- narrow with app intelligence filters such as buildability or niche status
+Do not claim that `app_detail` includes sample screens, that store-screen search includes images, or that the MCP exposes replay videos.
