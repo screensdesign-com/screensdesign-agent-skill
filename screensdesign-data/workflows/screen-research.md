@@ -41,7 +41,7 @@ For example, to find apps that request notifications before a paywall, search fo
 
 - Use `query` to narrow by app, publisher, or category metadata.
 - Use `app_smart_search` for the app's capability, audience, or problem, such as `AI math tutor`.
-- Use `smart_search` for visible screenshot content: headline copy, displayed UI, device composition, illustration/photography, visual style, or marketing message.
+- Use `screen_smart_search` for visible screenshot content: headline copy, displayed UI, device composition, illustration/photography, visual style, or marketing message.
 - When both semantic fields are supplied, app relevance is considered first and screenshot-content relevance second.
 - Do not use either semantic field for rankings. Do not infer recorded product behavior from marketing screenshots alone.
 

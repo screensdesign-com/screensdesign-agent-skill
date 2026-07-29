@@ -80,7 +80,7 @@ Use `app_detail.flows[].id` or an earlier flow-search result for exact retrieval
 
 ## App Store Screens
 
-`search_store_screens` returns `query`, `app_smart_search`, `smart_search`, `total`, `limit`, `offset`, top-level `apps`, and screenshot `results`. A result contains:
+`search_store_screens` returns `query`, `app_smart_search`, `screen_smart_search`, `total`, `limit`, `offset`, top-level `apps`, and screenshot `results`. A result contains:
 
 - `id`, `app_id`, and one-based `position` when known.
 - `description.summary`, `description.marketing_message`, and `description.sequence_role` when available.

@@ -13,7 +13,8 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 REPOSITORY_URL = "https://github.com/screensdesign-com/screensdesign-agent-skill"
 SKILL_NAME = "screensdesign-data"
-MCP_CONTRACT_VERSION = "1"
+MCP_CONTRACT_VERSION = "2"
+MINIMUM_SUPPORTED_VERSION = "1.0.2"
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_ROOT = ROOT / SKILL_NAME
 MANIFEST_PATH = ROOT / "release.json"
@@ -67,7 +68,7 @@ def expected_manifest(
     return {
         "name": SKILL_NAME,
         "version": version,
-        "minimum_supported_version": "1.0.0",
+        "minimum_supported_version": MINIMUM_SUPPORTED_VERSION,
         "mcp_contract_version": MCP_CONTRACT_VERSION,
         "release_tag": tag,
         "released_at": released_at,

@@ -5,13 +5,13 @@ description: Research mobile apps, competitors, onboarding, paywalls, recorded s
 
 # ScreensDesign Data
 
-Release: `1.0.1` · MCP contract: `1`
+Release: `1.0.2` · MCP contract: `2`
 
 Use ScreensDesign as an evidence-first mobile-app research source. Its hosted MCP is read-only and returns public app links, recorded-product evidence, App Store creatives, performance estimates, and saved collection context.
 
 ## Check This Skill Once
 
-When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.1"`.
+When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.2"`.
 
 - If the status is `current`, continue without discussing the check.
 - If it is `update_available`, continue when compatible and briefly tell the user an update exists.
@@ -56,7 +56,7 @@ Choose tools by intent:
 - Use `search_flows(flow_id=...)` for one exact flow returned by `app_detail` or `search_flows`. Otherwise use a concise journey or stored flow-name concept such as `onboarding`, `subscription`, `checkout`, or `notification permission`. Do not use long temporal propositions as flow queries.
 - In `search_apps`, use `smart_search` only for what an app does, who it serves, or the problem it solves. For “top”, “highest revenue”, or “most downloaded” lists, leave it empty and use filters plus `sort`.
 - `smart_search` is nearest-neighbor retrieval. Check names and short descriptions; make at most one materially different retry when results are clearly off-topic.
-- `search_store_screens` searches App Store marketing creatives, not recorded in-app screens. Use `app_smart_search` for what the app does or who it serves, and use `smart_search` separately for visible copy, UI, imagery, composition, style, or marketing message. When both are supplied, app relevance is considered first.
+- `search_store_screens` searches App Store marketing creatives, not recorded in-app screens. Use `app_smart_search` for what the app does or who it serves, and use `screen_smart_search` separately for visible copy, UI, imagery, composition, style, or marketing message. When both are supplied, app relevance is considered first.
 - Batch up to 10 known app IDs in `similar_apps`, `app_detail`, or `app_screens`, and up to 10 known screen IDs in `screen_detail`.
 
 ## Visual Similarity

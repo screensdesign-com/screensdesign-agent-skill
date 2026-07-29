@@ -75,16 +75,16 @@ Find visually similar recorded screens from exactly one source: a known `screen_
 
 ## App Store Creatives
 
-### `search_store_screens(query="", app_smart_search="", smart_search="", ..., limit=20, offset=0)`
+### `search_store_screens(query="", app_smart_search="", screen_smart_search="", ..., limit=20, offset=0)`
 
 Search promotional App Store product-page screenshots. Maximum 50.
 
 - `query` matches app, developer, or category metadata.
 - `app_smart_search` ranks by what an app does, who it serves, or the problem it solves. Follow the same ranking cautions as `search_apps.smart_search`.
-- `smart_search` ranks what one listing screenshot visibly shows or communicates: copy, UI, imagery, composition, style, or marketing message.
+- `screen_smart_search` ranks what one listing screenshot visibly shows or communicates: copy, UI, imagery, composition, style, or marketing message.
 - Scope with app IDs, excluded app IDs, category, and revenue bounds.
 
-Use `search_screens` for actual recorded in-app UI. Do not use either semantic field for rankings, and do not put non-visible app capabilities or sequence questions into screenshot `smart_search`. When both semantic fields are supplied, app relevance is considered first and screenshot-content relevance second.
+Use `search_screens` for actual recorded in-app UI. Do not use either semantic field for rankings, and do not put non-visible app capabilities or sequence questions into `screen_smart_search`. When both semantic fields are supplied, app relevance is considered first and screenshot-content relevance second.
 
 ## Developers And Saved Collections
 
