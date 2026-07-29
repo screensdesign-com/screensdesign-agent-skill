@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
@@ -19,17 +20,11 @@ MANIFEST_PATH = ROOT / "release.json"
 
 
 def skill_version() -> str:
-    lines = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8").splitlines()
-    in_metadata = False
-    for line in lines:
-        if line == "metadata:":
-            in_metadata = True
-            continue
-        if in_metadata and line and not line.startswith("  "):
-            break
-        if in_metadata and line.strip().startswith("version:"):
-            return line.split(":", 1)[1].strip().strip('"\'')
-    raise SystemExit("SKILL.md metadata.version is missing.")
+    markdown = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+    match = re.search(r"^Release: `([0-9]+\.[0-9]+\.[0-9]+)`", markdown, re.MULTILINE)
+    if match:
+        return match.group(1)
+    raise SystemExit("SKILL.md release declaration is missing.")
 
 
 def release_files() -> list[Path]:
@@ -101,7 +96,7 @@ def main() -> None:
     version = skill_version()
     if args.tag and args.tag != f"v{version}":
         raise SystemExit(
-            f"Release tag {args.tag!r} does not match SKILL.md version v{version}."
+            f"Release tag {args.tag!r} does not match the SKILL.md release v{version}."
         )
 
     files = release_files()

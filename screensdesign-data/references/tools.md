@@ -12,7 +12,7 @@ All research tools are read-only. Revenue and download filters are estimated mon
 
 ### `get_screensdesign_skill(installed_version=None, include_content=False)`
 
-Check whether the loaded `screensdesign-data` skill is current. Pass the version from `SKILL.md` metadata once per conversation. The response reports `current`, `update_available`, `incompatible`, `ahead`, or `unreported`, plus the latest release, compatibility, update command, hashes, and MCP resources. `include_content=true` also returns the current release's text files; normally use the ZIP resource instead.
+Check whether the loaded `screensdesign-data` skill is current. Pass the release declared near the top of `SKILL.md` once per conversation. The response reports `current`, `update_available`, `incompatible`, `ahead`, or `unreported`, plus the latest release, compatibility, update command, hashes, and MCP resources. `include_content=true` also returns the current release's text files; normally use the ZIP resource instead.
 
 ### `describe_screensdesign_mcp()`
 
@@ -75,15 +75,16 @@ Find visually similar recorded screens from exactly one source: a known `screen_
 
 ## App Store Creatives
 
-### `search_store_screens(query="", smart_search="", ..., limit=20, offset=0)`
+### `search_store_screens(query="", app_smart_search="", smart_search="", ..., limit=20, offset=0)`
 
 Search promotional App Store product-page screenshots. Maximum 50.
 
 - `query` matches app, developer, or category metadata.
+- `app_smart_search` ranks by what an app does, who it serves, or the problem it solves. Follow the same ranking cautions as `search_apps.smart_search`.
 - `smart_search` ranks what one listing screenshot visibly shows or communicates: copy, UI, imagery, composition, style, or marketing message.
 - Scope with app IDs, excluded app IDs, category, and revenue bounds.
 
-Use `search_screens` for actual recorded in-app UI. Do not use store-screen semantic search for rankings, non-visible capabilities, or sequence questions.
+Use `search_screens` for actual recorded in-app UI. Do not use either semantic field for rankings, and do not put non-visible app capabilities or sequence questions into screenshot `smart_search`. When both semantic fields are supplied, app relevance is considered first and screenshot-content relevance second.
 
 ## Developers And Saved Collections
 

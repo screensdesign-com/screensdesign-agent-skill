@@ -16,18 +16,18 @@ Used by `search_apps`, `similar_apps`, and `app_detail`:
 - `rating_value`, `released`, `updated`.
 - `latest_app_video_id`.
 - `appstore_url`, `screensdesign_app_url`.
+- Discovery and similarity results can also include `icon_url`; `app_detail` omits visual asset URLs from its structured result.
 - `intelligence` on search/similarity results:
   - `app_context.niche_segments` when available.
   - `all_in_one.onboarding_sequence_summary`, `onboarding_radar_axes`, and `unique_onboarding` when available.
 
-### App reference
+### App references used by visual tools
 
-Screen, flow, and store-screen tools return app identity separately or under `app`/`apps`:
+`app_screens`, `search_screens`, `search_flows`, `find_similar_screens`, and `get_collection` return app references separately under `app` or `apps`. Depending on the tool, these contain `id`, `name`, `short_description`, `developer`, `category_primary`, `release_date`, `rating_value`, `revenue`, `installs`, `icon_url`, `screensdesign_app_url`, and `appstore_url`. Visual-similarity references can also contain the latest `paywall_type`.
 
-- `id`, `name`, `short_description`.
-- `developer`, `category_primary`, `release_date`.
-- `rating_value`, `revenue`, `installs`, optional `paywall_type`.
-- `screensdesign_app_url`, `appstore_url`.
+`screen_detail.app` is intentionally smaller: `id`, `name`, and `screensdesign_app_url`.
+
+`search_store_screens.apps` contains `id`, `name`, `developer`, `category_primary`, `icon_url`, `screensdesign_app_url`, and `appstore_url`.
 
 MCP App UI metadata may carry app icons separately from the model-facing structured JSON.
 
@@ -61,7 +61,7 @@ A compact recorded screen can contain:
 - `screensdesign_screen_deep_link_url`: specific-screen page.
 - `flows`: related flow references when available.
 
-`app_screens` returns a single `app`, `latest_replay`, `pagination`, and `screens`, or batch `apps`, `results_by_app`, and `pagination_by_app`.
+`app_screens` returns a single `app`, `app_video`, `pagination`, and `screens`. Batch mode returns `requested_app_ids`, `apps`, `app_replays`, `pagination_by_app`, and one combined `screens` list grouped in request order.
 
 `search_screens`, `find_similar_screens`, and `get_collection` normally return a top-level `apps` list plus compact `results`, so identity is not duplicated on every screen.
 
@@ -80,20 +80,18 @@ Use `app_detail.flows[].id` or an earlier flow-search result for exact retrieval
 
 ## App Store Screens
 
-`search_store_screens` returns `total`, pagination, top-level app references, and screenshot results. A result can contain:
+`search_store_screens` returns `query`, `app_smart_search`, `smart_search`, `total`, `limit`, `offset`, top-level `apps`, and screenshot `results`. A result contains:
 
-- `id`.
+- `id`, `app_id`, and one-based `position` when known.
+- `description.summary`, `description.marketing_message`, and `description.sequence_role` when available.
 - `screensdesign_store_screen_deep_link_url`.
-- `width`, `height`, `order`, `created_at`.
-
-The MCP's model-facing JSON may omit visual asset URLs while a compatible host receives them through UI metadata.
 
 ## Developers
 
 `search_developers` returns `query`, `total`, pagination, and results. A developer result can contain:
 
 - `id`, `name`, `slug`, `store_id`.
-- `total_apps`, `revenue`, `downloads`, `rating_count`.
+- `total_apps`, `published_apps`, `revenue`, `downloads`, `rating_count`, and public developer `url`.
 - `app_ids`: authoritative internal app identifiers owned by the developer.
 
 ## Collections

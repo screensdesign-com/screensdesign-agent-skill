@@ -12,10 +12,10 @@ The skill teaches agents how to:
 - Research developer portfolios and saved app collections.
 - Cite public ScreensDesign links without exposing internal handles or withheld premium content.
 
-## Install Version 1.0.0
+## Install Version 1.0.1
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.0/screensdesign-data
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.1/screensdesign-data
 ```
 
 Update an installed copy:
@@ -24,7 +24,7 @@ Update an installed copy:
 npx skills update screensdesign-data
 ```
 
-The skill declares its version under `metadata.version`. When the hosted MCP is connected, the agent calls `get_screensdesign_skill` once with that version to learn whether the installation is current, compatible, or needs an update.
+The skill declares its release near the top of `SKILL.md`. When the hosted MCP is connected, the agent calls `get_screensdesign_skill` once with that version to learn whether the installation is current, compatible, or needs an update.
 
 ## Connect The Hosted MCP
 
@@ -84,13 +84,13 @@ screensdesign-data/
 
 ## Release Process
 
-Every published release uses a semantic Git tag such as `v1.0.0`. The tag must match `metadata.version` in `screensdesign-data/SKILL.md`.
+Every published release uses a semantic Git tag such as `v1.0.1`. The tag must match the release declared in `screensdesign-data/SKILL.md`.
 
 Run the release builder before tagging:
 
 ```bash
 python scripts/build_release.py --write-manifest
-python scripts/build_release.py --check --tag v1.0.0
+python scripts/build_release.py --check --tag v1.0.1
 ```
 
 The release manifest records the immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release containing the ZIP and manifest. The hosted MCP vendors that exact package so authenticated clients can read the current `SKILL.md` or download the release through MCP resources.

@@ -11,7 +11,7 @@ Server name convention: `screensdesign`. Scope: `mcp:read` (read-only; there are
 Install the versioned companion skill release:
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.0/screensdesign-data
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.1/screensdesign-data
 ```
 
 Update an existing installation:
@@ -20,7 +20,7 @@ Update an existing installation:
 npx skills update screensdesign-data
 ```
 
-When connected, call `get_screensdesign_skill` with the version from the installed skill metadata to verify whether an update is available. The server can compare a reported version but cannot inspect the client's local filesystem.
+When connected, call `get_screensdesign_skill` with the release declared near the top of the installed `SKILL.md` to verify whether an update is available. The server can compare a reported version but cannot inspect the client's local filesystem.
 
 ## OAuth (Preferred)
 
