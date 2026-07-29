@@ -1,70 +1,54 @@
 # ScreensDesign Agent Skill
 
-Public agent instructions for using the read-only ScreensDesign MCP server for iOS app and UI research.
+Versioned companion instructions for using the hosted ScreensDesign MCP from Codex, Claude Code, Cursor, and other skill-aware agents.
 
-## What It Supports
+The skill teaches agents how to:
 
-- Discover apps by name, category, developer, revenue, downloads, rating, and replay/store-screen availability.
-- Filter apps with structured intelligence such as target audience, niche status, buildability, scores, onboarding steps, paywall counts, quiz length, and detected patterns.
-- Resolve pasted ScreensDesign or App Store links and common app identifiers.
-- Inspect an app's latest replay as an ordered, paginated sequence with inline thumbnails and timestamped public page links.
-- Search replay-screen concepts semantically and inspect complete text-only OCR/UI analysis for selected screens.
-- Find visual-neighbor screens from a known replay screen.
-- Discover App Store screenshot metadata such as count, order, and dimensions.
-- Read app collections, saved groups, saved replay points, and saved store-screen records.
+- Discover and compare mobile apps using product, category, performance, and detected-pattern filters.
+- Inspect detailed app evidence, recorded screens, chronological replays, and stored user flows.
+- Verify before/after sequence claims instead of treating isolated screen matches as a full replay.
+- Search App Store marketing creatives separately from recorded in-app UI.
+- Find screens visually similar to a ScreensDesign screen or external reference image.
+- Research developer portfolios and saved app collections.
+- Cite public ScreensDesign links without exposing internal handles or withheld premium content.
 
-The visual boundary is intentional: only `app_screens` returns thumbnail images. Other hosted screen tools return text or metadata, and no tool returns replay videos, original/full-size images, PDFs, or downloadable flow documents.
+## Install Version 1.0.0
 
-## Repository Structure
-
-```text
-screensdesign-agent-skill/
-|-- README.md
-`-- screensdesign-data/
-    |-- SKILL.md
-    |-- agents/
-    |   `-- openai.yaml
-    |-- workflows/
-    |   |-- app-research.md
-    |   |-- screen-research.md
-    |   |-- app-intelligence.md
-    |   |-- saved-research.md
-    |   `-- completion-followups.md
-    `-- references/
-        |-- tools.md
-        |-- response-fields.md
-        `-- connection.md
+```bash
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.0/screensdesign-data
 ```
 
-`screensdesign-data/SKILL.md` is the installable entrypoint. Supporting files contain stable workflow and payload guidance; exact parameters and enums come from the live MCP schemas.
+Update an installed copy:
 
-## Hosted MCP
+```bash
+npx skills update screensdesign-data
+```
 
-Use the stateless Streamable HTTP endpoint:
+The skill declares its version under `metadata.version`. When the hosted MCP is connected, the agent calls `get_screensdesign_skill` once with that version to learn whether the installation is current, compatible, or needs an update.
+
+## Connect The Hosted MCP
+
+Endpoint:
 
 ```text
 https://api.screensdesign.com/v1/mcp
 ```
 
-OAuth browser login is preferred. Clients without MCP OAuth support can use a developer API key created at `https://screensdesign.com/mcp/keys`. Keys belong in client configuration or environment variables, never in chat.
-
-The MCP scope is read-only (`mcp:read`). The user must remain an active organization member, and production access may require an active ScreensDesign Pro subscription.
-
-### Claude Code
+Claude Code:
 
 ```bash
 claude mcp add --transport http screensdesign "https://api.screensdesign.com/v1/mcp" --scope user
 claude mcp login screensdesign
 ```
 
-### Codex
+Codex:
 
 ```bash
 codex mcp add screensdesign --url 'https://api.screensdesign.com/v1/mcp'
 codex mcp login screensdesign
 ```
 
-### Cursor
+Cursor:
 
 ```json
 {
@@ -76,24 +60,37 @@ codex mcp login screensdesign
 }
 ```
 
-See `screensdesign-data/references/connection.md` for API-key fallback examples and troubleshooting.
+The server uses browser OAuth, is stateless, and exposes read-only research tools. A client may need a new conversation or MCP refresh after configuration.
 
-## Install The Skill
-
-```bash
-npx -y skills add hashtagfox/screensdesign-agent-skill
-```
-
-Skill source:
+## Repository Structure
 
 ```text
-https://github.com/hashtagfox/screensdesign-agent-skill/tree/main/screensdesign-data
+screensdesign-data/
+|-- SKILL.md
+|-- agents/openai.yaml
+|-- workflows/
+|   |-- app-research.md
+|   |-- screen-research.md
+|   |-- app-intelligence.md
+|   |-- saved-research.md
+|   `-- completion-followups.md
+`-- references/
+    |-- tools.md
+    |-- response-fields.md
+    `-- connection.md
 ```
 
-After installation, configure the MCP endpoint separately if the client does not install declared MCP dependencies automatically. Open a new agent session or refresh the MCP client when newly added tools are not visible.
+`SKILL.md` stays compact and routes the agent to focused supporting files only when needed.
 
-## Contract Maintenance
+## Release Process
 
-The live MCP tool schemas are authoritative for parameters, defaults, limits, category values, and paywall enums. The skill deliberately avoids copying complete schemas so backend changes do not leave agents with stale call signatures.
+Every published release uses a semantic Git tag such as `v1.0.0`. The tag must match `metadata.version` in `screensdesign-data/SKILL.md`.
 
-Use `describe_screensdesign_mcp` for the current tool surface and privacy contract, and `describe_app_intelligence_schema` for intelligence fields, enums, scores, booleans, and pattern flags.
+Run the release builder before tagging:
+
+```bash
+python scripts/build_release.py --write-manifest
+python scripts/build_release.py --check --tag v1.0.0
+```
+
+The release manifest records the immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release containing the ZIP and manifest. The hosted MCP vendors that exact package so authenticated clients can read the current `SKILL.md` or download the release through MCP resources.

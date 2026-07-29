@@ -1,40 +1,48 @@
-# Screen Research Workflow
+# Screen And Flow Research Workflow
 
-Use this workflow for ordered replay flows, onboarding and paywall analysis, semantic UI discovery, screen details, visual neighbors, and App Store screenshot metadata.
+Use this workflow for recorded screens, onboarding/paywall sequence, stored flows, visual similarity, attached references, and App Store creatives.
 
-## Choose The Screen Tool
+## Pick The Evidence Surface
 
-- Use `app_screens` to browse one app's latest replay sequentially with thumbnails and timestamped public page links.
-- Use `search_screens` to find concepts semantically across apps or within an `app_id`/`app_ids` scope.
-- Use `screen_detail` for full OCR and public structured analysis of one screen.
-- Use `find_similar_screens` to find visual neighbors from a known screen id.
-- Use `search_store_screens` to discover App Store screenshot records. It returns metadata, not screenshot images.
+- Recorded in-app UI concept across apps: `search_screens`.
+- Complete latest replay in chronological order: `app_screens`.
+- Stored journey or exact known flow: `search_flows`.
+- One or up to 10 known screen records: `screen_detail`.
+- Visual alternatives to a known or attached screen: `find_similar_screens`.
+- App Store product-page marketing screenshots: `search_store_screens`.
 
-## Browse A Replay Flow
+## Verify Sequence
 
-1. Call `app_screens(app_id=...)`.
-2. Read screens in `position` and timestamp order.
-3. Continue with `pagination.next_offset` until `has_more=false` when completeness matters.
-4. Interpret inline ImageContent as a thumbnail. Interpret the separately labeled ResourceLink as the public HTML page at that timestamp.
-5. Use OCR, visible text, UI components, screen type, funnel stage, and flow intelligence to explain the sequence.
-6. Call `screen_detail` for screens requiring exact copy or deeper analysis.
+`search_screens` returns isolated candidates. For “before”, “after”, “immediately following”, or similar claims:
 
-The tool uses the latest enabled replay and exposes at most 10 screens per page. It does not expose older recordings by `app_video_id`.
+1. Search for the most distinctive target screen.
+2. Collect the returned app IDs.
+3. Call `app_screens` for those apps.
+4. Locate both target events in the same replay.
+5. Compare returned position and timestamp evidence.
+6. Make the sequence claim only when both events and their order are present.
 
-## Semantic Search
+For example, to find apps that request notifications before a paywall, search for the permission/warmup screen first, then inspect each candidate app's ordered replay for the paywall.
 
-Use a concise conceptual query such as "streak celebration", "lifetime offer paywall", or "commitment screen". `search_screens` always searches semantically when a query is present; there is no exact OCR/text mode, `search_mode` parameter, `vector_scope`, match score, or text fallback.
+## Flow Search
 
-Scope results with the live app/category/paywall/market filters when useful. App metadata is deduplicated in top-level `apps` and joined to results through `app_id`.
+- Use a concise journey concept such as `onboarding`, `subscription`, `checkout`, or `notification permission`.
+- Use `flow_id` to retrieve an exact flow returned by `app_detail` or a prior search.
+- Do not use flow search as a temporal query engine. Verify before/after relationships with `app_screens`.
 
-## Similar Screens
+## Visual Similarity
 
-Use `find_similar_screens(screen_id)` after identifying a strong reference. Treat `mode="visual_similarity"` as cross-app visual-neighbor results and `mode="same_app_neighbors"` as the fallback for screens without an image vector. Results are text-only.
+- For a ScreensDesign source, pass `screen_id`.
+- For an external image through public MCP, pass the supported base64 `image` object.
+- If the current host exposes an attachment index or handle, use only the live host-specific parameter instead of copying base64 into model text.
+- Supply exactly one source. Results exclude the source app.
 
-## Store-Screen Metadata
+## App Store Creatives
 
-`search_store_screens.query` matches app, developer, and category metadata—not screenshot copy. Compare counts, order, and dimensions, and use the returned public app links for any separate visual inspection. Do not promise screenshot image URLs through MCP.
+- Use `query` to narrow by app, publisher, or category metadata.
+- Use `smart_search` for visible screenshot content: headline copy, displayed UI, device composition, illustration/photography, visual style, or marketing message.
+- Do not infer recorded product behavior from marketing screenshots alone.
 
 ## Output
 
-For replay flows, describe the sequence with positions and timestamps, cite OCR/visible text as evidence, and show available thumbnails and `frontend_url` links. For semantic results, explain the conceptual matches without inventing similarity scores. Keep screen ids for follow-up calls unless the user requests them.
+Separate observation from interpretation. Cite visible text and compact descriptions, link each app/screen/flow to the exact URL supplied with that object, and use replay-moment links for timing claims. Do not print raw positions, IDs, or guessed links.

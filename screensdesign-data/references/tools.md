@@ -1,62 +1,107 @@
-# ScreensDesign MCP Usage
+# ScreensDesign MCP Tools
 
-Use the hosted read-only Streamable HTTP server at `https://api.screensdesign.com/v1/mcp`.
+Hosted Streamable HTTP MCP server:
 
-## Live Contract First
+```text
+https://api.screensdesign.com/v1/mcp
+```
 
-Use the MCP tool schemas for exact arguments, defaults, limits, category values, and paywall enums. Do not reconstruct parameters from this file.
+All research tools are read-only. Revenue and download filters are estimated monthly USD and installs. `offset` is zero-based. Live input schemas are authoritative and include allowed enum values.
 
-- Call `describe_screensdesign_mcp` for the current tool list, schema version, visual/privacy boundary, and authentication method.
-- Call `describe_app_intelligence_schema` before nontrivial app-intelligence filtering. Only named `search_apps` parameters are filterable; schema fields are documentation, not arbitrary filters.
+## Capability And Skill
 
-## Tool Choice
+### `get_screensdesign_skill(installed_version=None, include_content=False)`
 
-| Need | Tool | Key behavior |
-|------|------|--------------|
-| Rich app candidates | `list_research_apps` | Returns descriptions, classification, replay summary, public links, and internal follow-up refs |
-| Unified app search | `search_apps` | Filters metadata, metrics, app context, scores, and onboarding/paywall intelligence |
-| Resolve a pasted link or identifier | `resolve_app_link` | Accepts ScreensDesign/App Store links and common app identifiers |
-| App-level context | `app_detail` | Returns metadata, revenue history, reviews, latest-replay summary, video metadata, and store-screen metadata; no visuals or replay screens |
-| Browse a latest replay | `app_screens` | Returns an ordered, paginated flow with optional inline thumbnails and timestamped page links |
-| Search replay UI concepts | `search_screens` | Semantic AI search over screen descriptions and curated UI intelligence |
-| Inspect one screen | `screen_detail` | Complete text-only OCR and public analysis metadata |
-| Find visual neighbors | `find_similar_screens` | Uses visual similarity when possible, otherwise returns same-app neighbors |
-| Discover store-screen records | `search_store_screens` | Metadata only; no screenshot image assets |
-| Research publishers | `search_developers` | Portfolio and market metadata |
-| Read saved research | `list_collections`, `search_saved_research` | Authenticated user's collections and organization saved groups/items |
+Check whether the loaded `screensdesign-data` skill is current. Pass the version from `SKILL.md` metadata once per conversation. The response reports `current`, `update_available`, `incompatible`, `ahead`, or `unreported`, plus the latest release, compatibility, update command, hashes, and MCP resources. `include_content=true` also returns the current release's text files; normally use the ZIP resource instead.
 
-## App Intelligence
+### `describe_screensdesign_mcp()`
 
-Use `search_apps` named parameters for supported array fields, enums, booleans, score ranges, detected/excluded patterns, and onboarding/paywall counts.
+Return the connected scopes and authentication method, available tools, and high-level capabilities. Use only when access or the live surface is unclear; do not call before ordinary research.
 
-- Array filters match all requested values by default; set `app_context_match_any=true` to match any requested array value.
-- Use `detected_patterns` and `excluded_patterns` only with flags returned by `describe_app_intelligence_schema`.
-- Use `aio_text` for heuristic concepts without a dedicated parameter, such as gamification, personalization, social proof, streaks, or commitment.
-- Do not send `app_context_filters` or `has_gamification`; neither is part of the hosted schema.
+## Apps
 
-## Latest Replay Browsing
+### `search_apps(...)`
 
-Use `app_screens` after selecting an app:
+Default 20, maximum 100. Paginate with `limit` and `offset`.
 
-1. Start with the default page or request up to 10 screens.
-2. Read `screens` in `position` and timestamp order.
-3. Use `pagination.next_offset` while `pagination.has_more` is true.
-4. Treat inline `ImageContent` as the thumbnail and the following ResourceLink as the separate HTML screen page.
-5. Use `frontend_url` to open the public app page at that exact replay timestamp.
-6. Pass interesting screen ids to `screen_detail` or `find_similar_screens`.
+Important parameters:
 
-`app_screens` always uses the latest enabled replay. It does not accept an `app_video_id` for an older recording.
+- `app_name`: full or partial brand name.
+- `smart_search`: semantic description of a concrete capability, audience, or problem. It controls relevance ordering and takes precedence over `sort`.
+- `category`, `app_ids`, `exclude_app_ids`.
+- `detected_patterns`, `excluded_patterns` using the enum in the live schema.
+- `min/max_onboarding_steps`, `min/max_paywalls`, `min/max_quiz_questions`.
+- `min/max_revenue`, `min/max_downloads`, `min/max_rating`.
+- `sort`: `revenue`, `downloads`, `updated`, `released`, `rating`, or `name` when semantic search is inactive.
 
-## Screen Search
+Do not put list intent such as “top subscription apps” into `smart_search`. Use `min_paywalls=1`, `sort="revenue"`, and other explicit filters instead.
 
-A non-empty `search_screens.query` always performs semantic search. Scope it with app, category, paywall type, and market bounds when useful. Omitting the query returns recent screen records rather than an OCR text search.
+### `similar_apps(app_id=None, app_ids=None, limit=20, offset=0)`
 
-Results contain text and UI intelligence, with app records deduplicated in top-level `apps` and referenced by `app_id`. They do not contain image assets, match scores, or fallback error fields.
+Find comparable apps for one source or as many as 10 sources. Maximum 50 results per source. In batch mode the server merges duplicates and records which source apps each result resembles.
 
-`find_similar_screens.mode` is `visual_similarity` when an image vector exists and `same_app_neighbors` otherwise.
+### `app_detail(app_id=None, app_ids=None, include_store_screens=True, include_videos=True)`
 
-## Store Screens And Saved Research
+Return detailed evidence for one app or a batch of up to 10. App identifiers may be ScreensDesign or App Store URLs, slugs, store IDs, bundles, or internal IDs. The response includes product/performance metadata, compact detected patterns, monthly revenue history, latest replay summary, chronological `flows`, optional replay summaries, and App Store screenshot IDs.
 
-`search_store_screens` searches app/developer/category metadata, not text inside screenshots. Results expose ids, dimensions, order, timestamps, and top-level app references; image and thumbnail URLs are removed.
+Use `flows[].id` in an exact `search_flows(flow_id=...)` follow-up. `flows[].type` distinguishes broad `main_flows` from granular `onboarding_sequence` steps.
 
-`search_saved_research` returns saved group and item metadata. Hosted sanitization removes visual asset URLs, including saved replay-point screen URLs.
+## Recorded Screens And Flows
+
+### `app_screens(app_id=None, app_ids=None, limit=50, offset=0)`
+
+Browse a latest recorded experience in replay order for one app or up to 10. Maximum 50 screens per app per call. Batch results include independent pagination per app; continue with each `next_offset` when present. Use positions and timestamps to verify sequence.
+
+### `search_screens(query, ..., limit=20, offset=0)`
+
+Search isolated recorded screens by a natural-language UI or experience concept. Maximum 50. Scope with app inclusion/exclusion, category, paywall type, revenue, downloads, and rating filters. Search results do not contain neighboring screens and cannot prove sequence.
+
+### `search_flows(query="", flow_id=None, ..., limit=20, offset=0)`
+
+Provide exactly one of:
+
+- `flow_id` to retrieve a known flow returned by `app_detail` or `search_flows`.
+- A concise `query` describing a journey or stored flow name.
+
+Maximum 50. Apply app, category, paywall, revenue, download, and rating filters early. For before/after questions, use screen discovery followed by `app_screens` instead.
+
+### `screen_detail(screen_id=None, screen_ids=None, include_image=True)`
+
+Return focused evidence for one screen or up to 10 screens. Includes app identity, compact structured description, image URL, exact replay-moment URL, and related flow references. `include_image` controls native image content blocks, not structured metadata.
+
+### `find_similar_screens(screen_id=None, image=None, limit=20)`
+
+Find visually similar recorded screens from exactly one source: a known `screen_id` or a base64 image object with `data` and `content_type`. Maximum 50. Screens belonging to the source app are excluded.
+
+## App Store Creatives
+
+### `search_store_screens(query="", smart_search="", ..., limit=20, offset=0)`
+
+Search promotional App Store product-page screenshots. Maximum 50.
+
+- `query` matches app, developer, or category metadata.
+- `smart_search` ranks what one listing screenshot visibly shows or communicates: copy, UI, imagery, composition, style, or marketing message.
+- Scope with app IDs, excluded app IDs, category, and revenue bounds.
+
+Use `search_screens` for actual recorded in-app UI. Do not use store-screen semantic search for rankings, non-visible capabilities, or sequence questions.
+
+## Developers And Saved Collections
+
+### `search_developers(query="", category=None, min_revenue=None, min_downloads=None, limit=20, offset=0)`
+
+Search publishers and portfolios. Maximum 100. Each developer result includes authoritative internal app IDs for follow-up calls.
+
+### `list_collections(include_app_collections=True, include_saved_groups=True)`
+
+List the connected user's app collections and shared saved groups, including counts. This tool does not return their contents.
+
+### `get_collection(collection_id, limit=20, offset=0)`
+
+Browse latest-replay screens across the apps in one app collection. Maximum 50. Use a collection ID returned by `list_collections` and continue with `next_offset` when present.
+
+## Error Recovery
+
+- Read the tool error's corrective message and valid parameter example, fix the call once, and continue.
+- Do not repeat the same invalid or already-successful call unchanged.
+- When a record is unavailable, try one materially relevant alternative route and then report the limitation.
+- HTTP 401 means authentication must be completed or refreshed. HTTP 429 means wait for the supplied retry period before trying again.

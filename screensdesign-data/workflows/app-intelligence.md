@@ -1,43 +1,39 @@
-# App Intelligence Workflow
+# App Pattern Filtering Workflow
 
-Use this workflow for target audience, niche status, buildability, habit potential, opportunity class, risk, score, onboarding-step, paywall, quiz-length, or detected-pattern filters.
+Use this workflow for app discovery based on detected onboarding/paywall patterns or replay-shape counts.
 
-## Construct Valid Filters
+## Available Filters
 
-- Use `search_apps` for structured intelligence filtering.
-- Call `describe_app_intelligence_schema` when enum values or pattern flags are uncertain.
-- Send only named `search_apps` parameters. Do not send arbitrary schema fields through `app_context_filters`.
-- Use `app_context_match_any=true` only when requested array filters may match any value; the default requires all requested array values.
-- Use the named novelty, commodity, and incumbent score ranges for 0-100 score filtering.
-- Use `detected_patterns` and `excluded_patterns` with live pattern flags.
-- Use the named onboarding-step, paywall, and quiz-question ranges for flow shape.
-- Use `aio_text` for heuristic concepts without a dedicated filter, including gamification, personalization, social proof, streaks, or commitment. Do not send `has_gamification`.
+`search_apps` supports:
 
-Put broad product/classification text in `query` and replay-analysis concepts in `aio_text`.
+- `detected_patterns` and `excluded_patterns`; use only names from the live enum.
+- `min/max_onboarding_steps`.
+- `min/max_paywalls`.
+- `min/max_quiz_questions`.
+- Category, revenue, download, rating, app inclusion/exclusion, and sort filters.
 
-Example, "solo-buildable fitness apps with a long quiz and at least two paywalls":
+Examples of live pattern names can include `HasQuiz`, `HasTrialTimeline`, `HasDiscountOffer`, `SpecialOfferPaywall`, `HasFreeTrialSwitcher`, `HasRatingWarmupScreen`, `HasSignToCommitScreen`, `HasBeforeAfterScreen`, `HasNotificationWarmupScreen`, and `HasPostSubscriptionWelcomeScreen`. Treat the tool schema as authoritative because this enum can evolve.
+
+## Workflow
+
+1. Translate only explicit or strongly implied constraints into filters.
+2. Keep `smart_search` for a concrete app capability or audience, not the onboarding pattern itself when a structured pattern filter exists.
+3. Sort explicitly when the user asks for top revenue, downloads, rating, newest, or recently updated apps.
+4. Treat matching patterns as AI-derived signals.
+5. Verify important claims against `app_screens`, `search_screens`, or an exact `search_flows` result before presenting them as observed behavior.
+
+Example, “high-revenue fitness apps with quiz onboarding and at least one paywall”:
 
 ```json
 {
   "category": "Health & Fitness",
-  "indie_buildability": "solo_buildable",
   "detected_patterns": ["HasQuiz"],
-  "min_quiz_questions": 10,
-  "min_paywalls": 2,
+  "min_paywalls": 1,
   "sort": "revenue",
   "limit": 20
 }
 ```
 
-Verify enum and pattern values against the live schema before sending.
-
-## Verify Intelligence With Replay Evidence
-
-1. Use `list_research_apps(app_ids=[...])` for richer descriptions and public links.
-2. Use `app_screens` on the strongest matches to inspect the latest replay in order.
-3. Use `search_screens(app_ids=[...])` for semantic discovery of the screens behind a detected concept.
-4. Use `screen_detail` on important screen ids for complete text evidence.
-
 ## Output
 
-Lead with the result count and structured filters used. Pair metrics with the classification or flow evidence that matched. Treat AI fields as signals, not ground truth, and verify consequential claims against replay screens.
+State the applied filters and distinguish detected signals from visually verified evidence. Do not expose raw pattern payloads when a human explanation is clearer.

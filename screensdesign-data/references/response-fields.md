@@ -1,71 +1,124 @@
-# ScreensDesign Response Guidance
+# ScreensDesign Response Fields
 
-Use live tool output as the source of truth. The hosted server sanitizes private metadata and visual URLs from every tool response; only `app_screens.thumbnail_url` is explicitly allowed.
+The MCP returns compact public research objects, not raw database rows. Optional fields may be `null`, empty, or absent. Live output schemas override this reference.
 
-## App Search
+## Shared App Objects
 
-`search_apps` returns `query`, `total`, `limit`, `offset`, echoed `filters`, and `results`.
+### App summary
 
-Each result contains app identity, developer/category metadata, monthly revenue/download estimates, rating and dates, `appstore_url`, `web_url`, and an `intelligence` block:
+Used by `search_apps`, `similar_apps`, and `app_detail`:
 
-- `intelligence.app_context`: public classification fields such as audiences, app types, opportunity/buildability fields, scores, risks, and booleans.
-- `intelligence.all_in_one`: detected patterns, onboarding summary, radar axes, main flows, unique onboarding, and learning notes.
+- `id`, `slug`, `store_id`, `name`.
+- `short_description`: generated concise copy, or the first 100 words of the App Store description.
+- `developer`: compact `id` and `name`.
+- `category_primary`.
+- `revenue`, `downloads`: estimated monthly values.
+- `rating_value`, `released`, `updated`.
+- `latest_app_video_id`.
+- `appstore_url`, `screensdesign_app_url`.
+- `intelligence` on search/similarity results:
+  - `app_context.niche_segments` when available.
+  - `all_in_one.onboarding_sequence_summary`, `onboarding_radar_axes`, and `unique_onboarding` when available.
 
-`list_research_apps` and `resolve_app_link` return richer app records with:
+### App reference
 
-- `public_links.app` and `public_links.app_store` for users.
-- `internal_refs` for follow-up calls.
-- `enhanced_description`, `classification`, and `replay_summary`.
+Screen, flow, and store-screen tools return app identity separately or under `app`/`apps`:
 
-No hosted app response exposes `icon_url`.
+- `id`, `name`, `short_description`.
+- `developer`, `category_primary`, `release_date`.
+- `rating_value`, `revenue`, `installs`, optional `paywall_type`.
+- `screensdesign_app_url`, `appstore_url`.
 
-## App Detail
+MCP App UI metadata may carry app icons separately from the model-facing structured JSON.
 
-`app_detail` returns app-level metadata plus:
+## App Search And Detail
 
-- `latest_ai_patterns`: the public subset of the latest replay analysis.
-- `revenue_list` and up to five `reviews_sample` items.
-- `latest_replay`: replay id, duration, recording date, onboarding/paywall summary, screen count, ordering, and flow intelligence.
-- `videos[]`: identifiers, dates, durations, onboarding-step counts, and paywall types; no video URLs.
-- `store_screens[]`: ids, dimensions, order, and creation dates; no screenshot URLs.
+`search_apps` returns `app_name`, `smart_search`, `total`, `limit`, `offset`, applied `filters`, and `results`.
 
-It does not return replay `screens[]`. Use `app_screens` for those.
+Single-source `similar_apps` returns `source`, `total`, `limit`, `offset`, and `results`. Batch mode returns `sources`, `requested_app_ids`, merged `results`, `limit_per_source`, and per-source pagination; merged results include `similar_to_app_ids`.
 
-## App Screens
+`app_detail` extends an app summary with:
 
-`app_screens` returns both structured content and MCP content blocks.
+- `latest_ai_patterns.patterns`: detected public replay patterns only.
+- `revenue_list`: monthly revenue history.
+- `latest_replay`: onboarding step count, paywall type, screen count, and screen ordering.
+- `flows`: chronological flow entries with `id`, `type`, `title`, `description`, `time_from`, and `time_to`.
+- Optional `videos`: `id`, onboarding step count, and paywall type.
+- Optional `store_screens`: current App Store screenshot IDs.
 
-Structured content contains:
+A batched app-detail response contains `requested_app_ids`, `count`, and `results`.
 
-- `app`: compact app/developer/category metadata and public app links.
-- `latest_replay`: replay metadata, screen count, ordering, and flow intelligence.
-- `pagination`: `total`, `limit`, `offset`, `returned`, `has_more`, and `next_offset`.
-- `screens[]`: `id`, `position`, `timestamp`, `app_video_id`, labels/tags, full OCR text and annotations, public screen description fields, optional onboarding/paywall analysis, `thumbnail_url`, and timestamped `frontend_url`.
+## Recorded Screens
 
-MCP content begins with a page summary. Each screen then has a caption, an optional WebP thumbnail `ImageContent`, and a separately labeled HTML ResourceLink. The ResourceLink is not the thumbnail asset.
+A compact recorded screen can contain:
 
-## Screen Search And Detail
+- `id`: handle for `screen_detail` or visual similarity.
+- `app_id` where the surrounding result does not already carry app identity.
+- `position` and `timestamp` where replay ordering matters.
+- `description`: compact structured content such as `exhaustive_description`, `screen_type`, `funnel_stage`, `visible_text`, and—on focused detail—`primary_user_goal`.
+- `image_url`.
+- `screen_appearance_timestamp_url`: exact replay moment.
+- `screensdesign_screen_deep_link_url`: specific-screen page.
+- `flows`: related flow references when available.
 
-`search_screens` returns `query`, `search_mode="semantic"`, pagination fields, top-level deduplicated `apps[]`, and `results[]`. Each result references its app with `app_id` and includes timestamp/replay metadata, OCR excerpt, description, labels/tags, screen/funnel classification, actions, visible text, components, layout/style, design patterns, and monetization signals.
+`app_screens` returns a single `app`, `latest_replay`, `pagination`, and `screens`, or batch `apps`, `results_by_app`, and `pagination_by_app`.
 
-It does not return image URLs, nested full app objects, match scores, or semantic-fallback errors.
+`search_screens`, `find_similar_screens`, and `get_collection` normally return a top-level `apps` list plus compact `results`, so identity is not duplicated on every screen.
 
-`screen_detail` returns one screen's position, timestamp, full OCR and annotations, labels/tags, public description fields, optional onboarding/paywall analysis, a compact `app`, and replay metadata. It does not return raw `vsearch_data`, embedding fields, or visual assets.
+`screen_detail` returns one detailed screen or batched `requested_screen_ids`, `count`, and `results`.
 
-`find_similar_screens` returns `source`, `mode`, top-level `apps`, and text-only `results`. Modes are `visual_similarity` and `same_app_neighbors`; no similarity score is exposed.
+## Flows
 
-## Store Screens
+`search_flows` returns top-level `apps` and `results`. Each result can contain:
 
-`search_store_screens` returns `query`, list pagination fields, top-level deduplicated `apps[]`, and results containing `id`, `app_id`, dimensions, order, and creation date. It does not return `image_url` or `thumbnail_url`.
+- `id`, `app_video_id`, `name`, `description`.
+- `time_from`, `time_to` in replay seconds.
+- `screensdesign_flow_deep_link_url`.
+- Chronological `screens` with public image and deep-link evidence.
 
-## Saved Research
+Use `app_detail.flows[].id` or an earlier flow-search result for exact retrieval.
 
-`list_collections` returns `app_collections[]` and/or `saved_groups[]` with names and counts.
+## App Store Screens
 
-`search_saved_research` returns `groups[]`, `saved_points[]`, and `saved_store_screens[]`. Saved points expose descriptions, timestamps, `app_video_id`, app metadata, and creation dates. Saved store-screen items expose descriptions, `store_screen_id`, app metadata, and creation dates. Visual asset URLs are removed.
+`search_store_screens` returns `total`, pagination, top-level app references, and screenshot results. A result can contain:
 
-## Errors
+- `id`.
+- `screensdesign_store_screen_deep_link_url`.
+- `width`, `height`, `order`, `created_at`.
 
-- HTTP 401 indicates missing/invalid credentials, missing scope, inactive membership, or a Pro-access failure. Follow the OAuth discovery metadata in `WWW-Authenticate` or fix the configured API key.
-- HTTP 429 includes `Retry-After`; wait before retrying.
-- Invalid ids and apps without an enabled replay surface as tool errors. Verify identifiers from earlier results and continue with other candidates when appropriate.
+The MCP's model-facing JSON may omit visual asset URLs while a compatible host receives them through UI metadata.
+
+## Developers
+
+`search_developers` returns `query`, `total`, pagination, and results. A developer result can contain:
+
+- `id`, `name`, `slug`, `store_id`.
+- `total_apps`, `revenue`, `downloads`, `rating_count`.
+- `app_ids`: authoritative internal app identifiers owned by the developer.
+
+## Collections
+
+`list_collections` returns:
+
+- `app_collections`: `id`, `name`, `app_count`, `screen_count`, `created_at`.
+- `saved_groups`: group metadata and saved-item counts when requested.
+
+`get_collection` returns `collection`, `total`, `limit`, `offset`, `next_offset`, top-level `apps`, and screen `results` in the same compact shape as screen search.
+
+## Skill Release
+
+`get_screensdesign_skill` returns:
+
+- Installed and latest versions plus `status`.
+- `minimum_supported_version` and `mcp_contract_version`.
+- Immutable release tag, dates, repository/release URLs, and content/archive hashes.
+- ZIP, manifest, and `SKILL.md` MCP resource URIs.
+- Install and update commands.
+- Optional `files` only when `include_content=true`.
+
+## Errors And Access
+
+- Authentication failures return HTTP 401 with OAuth discovery information.
+- Rate limits return HTTP 429 and a retry hint.
+- Invalid identifiers and arguments return corrective tool errors. Reuse identifiers from successful results.
+- Results are already filtered for the current account. Do not infer withheld visual content or promise fields absent from the public contract.

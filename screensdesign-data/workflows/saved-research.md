@@ -1,25 +1,18 @@
-# Saved Research Workflow
+# Saved Collection Workflow
 
-Use this workflow for existing ScreensDesign app collections, saved groups, saved replay points, or saved store-screen records.
+Use this workflow when the user refers to their ScreensDesign app collections or shared saved groups.
 
-## Read Only
+## Read-Only Workflow
 
-The MCP server can read saved research but cannot create, update, or delete it. If the user asks to save something, direct them to the ScreensDesign web app and offer a concise finding they can save there.
+1. Call `list_collections` to see the connected user's app collections and shared group counts.
+2. For an app collection, pass its returned ID to `get_collection`.
+3. Continue with `next_offset` only when more collection screens are needed.
+4. Reuse app and screen identifiers from collection results for `app_detail`, `app_screens`, `screen_detail`, or similarity research.
 
-## Tool Choice
+`get_collection` currently browses screens from app collections. A listed shared group does not imply that a public tool exists to inspect every saved item inside it.
 
-- Use `list_collections` for app collections and organization saved-group counts.
-- Use `search_saved_research(query=...)` to find matching groups, replay points, saved store-screen records, and associated apps.
-
-Saved replay points expose their description, timestamp, `app_video_id`, and app context. Saved store-screen items expose their description, `store_screen_id`, and app context. Hosted sanitization removes their visual URLs.
-
-## Reconnect To Current Data
-
-- Use `app_detail` or `list_research_apps(app_ids=[...])` to refresh app context.
-- Use `app_screens` only when the saved point's `app_video_id` matches the app's current latest replay; paginate to the saved timestamp.
-- If the saved point belongs to an older replay, explain that the hosted MCP cannot browse that recording directly.
-- Use `search_store_screens(app_ids=[...])` for current store-screen metadata, not images.
+The MCP is read-only. If the user asks to save, rename, pin, or delete research, explain that those actions happen in the ScreensDesign website.
 
 ## Output
 
-Summarize what is saved and where, with collection/group names, counts, descriptions, timestamps, app names, and public app links. Do not promise saved screen or store-image URLs.
+Use collection/group names and counts. Link returned apps and screens through their supplied public URLs. Keep collection, app, and screen IDs as internal follow-up handles unless debugging was requested.

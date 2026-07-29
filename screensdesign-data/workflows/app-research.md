@@ -1,32 +1,34 @@
 # App Research Workflow
 
-Use this workflow for app discovery, competitor discovery, revenue bands, pasted URLs, app context, developers, and categories.
+Use this workflow for app and competitor discovery, rankings, selected-app details, pasted app links, and publisher portfolios.
 
-## Choose The App Tool
+## Choose The First Call
 
-- Use `resolve_app_link` first for a pasted ScreensDesign URL, App Store URL, slug, store id, bundle, or app id.
-- Use `list_research_apps` for rich candidates with descriptions, classifications, replay summaries, public links, and internal refs.
-- Use `search_apps` for unified metadata, metric, and structured-intelligence filtering.
-- Use `app_detail` after selecting an app for revenue history, reviews, latest-replay summary, video metadata, and store-screen metadata. It returns no replay screens or visuals.
-- Use `search_developers` for publisher and portfolio research.
-- Read category values from the live input schema; common aliases and legacy codes are normalized by the server.
+- Known app, ScreensDesign URL, App Store URL, slug, store ID, or bundle: call `app_detail` directly.
+- Named brand search: use `search_apps(app_name=...)`.
+- Concrete capability, audience, or job: use `search_apps(smart_search=...)`.
+- Ranked or filtered market list: leave `smart_search` empty and use explicit filters plus `sort`.
+- Alternatives to known apps: use `similar_apps`, batching up to 10 source IDs.
+- Publisher portfolio: use `search_developers`, then reuse returned `app_ids`.
 
-## Market Filters
+## Search Discipline
 
-Treat revenue and downloads as monthly estimates. Translate fuzzy requests into explicit ranges and report the range used. Add `has_replays=true` when the user needs replay evidence and `has_store_screens=true` when store-screen records matter.
+- Apply category, revenue, download, rating, detected-pattern, onboarding, quiz, and paywall filters in the tool call when relevant.
+- Revenue and downloads are monthly estimates. For “around $20K”, a reasonable starting range is `min_revenue=15000`, `max_revenue=30000`; state the assumption.
+- `smart_search` ranks semantic neighbors. Check app names and short descriptions before treating them as relevant.
+- If semantic results are clearly off-topic, make at most one materially different retry—for example, use an exact app name or remove an overly restrictive filter. Do not retry synonyms indefinitely.
+- Paginate only when the user needs broader coverage or the first page is insufficient.
 
-Use the live schema for exact filter and sort values. Do not inspect credentials or local application configuration to invent hidden options.
+## Drill Down
 
-## Drill Into A Shortlist
+After discovering candidates:
 
-1. Call `app_detail` for app-level context.
-2. Call `app_screens` for the strongest apps and paginate through the latest replay when sequence matters.
-3. Call `search_screens` with `app_ids` for semantic discovery of specific concepts across the shortlist.
-4. Call `screen_detail` on important ids for complete OCR and UI analysis.
-5. Call `search_store_screens` only for store-screen metadata such as order and dimensions.
+1. Call `app_detail` for only the selected apps; batch up to 10.
+2. Use `app_screens` when chronological recorded behavior matters.
+3. Use `search_screens` for a particular recorded UI concept across the shortlist.
+4. Use `search_store_screens` for how the same apps market themselves on the App Store.
+5. Use `search_flows(flow_id=...)` when `app_detail` exposes a specific flow worth opening.
 
 ## Output
 
-Lead with the scope, result count, and filters used. Compare apps with revenue, downloads, rating, positioning, classifications, and public links. Keep internal ids out of prose unless requested.
-
-Do not claim that `app_detail` includes sample screens, that store-screen search includes images, or that the MCP exposes replay videos.
+Lead with the answer and scope. For comparisons, keep criteria consistent: positioning, estimated revenue/downloads, rating, release/update timing, observed patterns, and relevant flow evidence. Link app names to supplied ScreensDesign app URLs and label estimates and AI-derived intelligence appropriately.
