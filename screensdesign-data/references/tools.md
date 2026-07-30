@@ -59,9 +59,11 @@ Browse a latest recorded experience for one app or up to 10. Maximum 50 screens 
 - Set `limit` to the number of matching screens needed per app. For example, `app_screens(app_ids=["340","512"], query="free trial toggle paywall", limit=1)` returns one focused candidate from each app.
 - Continue with each `next_offset` only when broader coverage is actually needed.
 
-### `search_screens(query, ..., limit=20, offset=0)`
+### `search_screens(query, ..., max_per_app=2, limit=20, offset=0)`
 
-Search isolated recorded screens by a natural-language UI or experience concept. Maximum 50. Scope with app inclusion/exclusion, category, paywall type, revenue, downloads, and rating filters. Search results do not contain neighboring screens and cannot prove sequence.
+Search isolated screens from each app's latest replay by a natural-language visible UI or experience concept. Maximum 50. Scope with app inclusion/exclusion, category, paywall type, revenue, downloads, and rating filters. `max_per_app` accepts 1–10 and prevents one app from dominating broad results.
+
+Results are nearest semantic candidates, not calibrated relevance guarantees. Check every returned `description`; when it does not actually support the requested UI concept, do not use it as evidence and report no strong match when appropriate. Search results do not contain neighboring screens.
 
 ### `search_flows(query="", flow_id=None, ..., limit=20, offset=0)`
 
@@ -72,9 +74,9 @@ Provide exactly one of:
 
 Maximum 50. Apply app, category, paywall, revenue, download, and rating filters early. For before/after questions, use screen discovery followed by `app_screens` instead.
 
-### `screen_detail(screen_id=None, screen_ids=None, include_image=True)`
+### `screen_detail(screen_id=None, screen_ids=None, neighbor_count=1, include_image=True)`
 
-Return focused evidence for one screen or up to 10 screens. Includes app identity, compact structured description, image URL, exact replay-moment URL, and related flow references. `include_image` controls native image content blocks, not structured metadata.
+Return focused evidence for one screen or up to 10 screens. Includes app identity, compact structured description, image URL, exact replay-moment URL, related flow references, and immediately adjacent screens from the same replay. `neighbor_count` accepts 0–3 screens on each side. `include_image` controls native image content blocks for the focused screens, not structured metadata.
 
 ### `find_similar_screens(screen_id=None, image=None, limit=20)`
 

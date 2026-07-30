@@ -17,7 +17,7 @@ Then suggest the smallest useful next step.
 
 - App list → inspect selected apps with `app_detail`, then open ordered replays with `app_screens`.
 - One app → find alternatives with `similar_apps`, or compare its recorded UI with its App Store creatives.
-- Isolated screens → verify sequence with `app_screens`, inspect the strongest screen with `screen_detail`, or expand visually with `find_similar_screens`.
+- Isolated screens → inspect immediate replay neighbors with `screen_detail`, verify broader sequence with `app_screens`, or expand visually with `find_similar_screens`.
 - Flow result → retrieve the exact flow by ID or compare the same journey across shortlisted apps.
 - Detected pattern → verify it against recorded screens before turning it into a recommendation.
 - App Store creatives → compare their promise with recorded product behavior.

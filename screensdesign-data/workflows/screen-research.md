@@ -14,16 +14,16 @@ Use this workflow for recorded screens, onboarding/paywall sequence, stored flow
 
 ## Verify Sequence
 
-`search_screens` returns isolated candidates. For “before”, “after”, “immediately following”, or similar claims:
+`search_screens` searches only latest replays and diversifies results across apps. It still returns nearest semantic candidates, so first reject results whose descriptions do not support the requested visible UI. For “before”, “after”, “immediately following”, or similar claims:
 
 1. Search for the most distinctive target screen.
-2. Collect the returned app IDs.
-3. Retrieve each needed event inside those apps with a focused `app_screens` query. Use an unfiltered replay page only when focused results are insufficient.
-4. Locate both target events in the same replay.
-5. Compare returned position and timestamp evidence.
+2. Validate its returned description before collecting app IDs.
+3. Use `screen_detail(neighbor_count=1)` when immediate adjacency can answer the question.
+4. Otherwise retrieve each needed event inside those apps with focused `app_screens` queries. Use an unfiltered replay page only when focused results are insufficient.
+5. Locate both target events in the same replay and compare returned position and timestamp evidence.
 6. Make the sequence claim only when both events and their order are present.
 
-For example, to find apps that request notifications before a paywall, search for the permission/warmup screen first, then use focused `app_screens` queries to retrieve the permission and paywall evidence inside each candidate app. Compare the true returned positions or timestamps; browse the unfiltered replay only when either event remains missing.
+For example, to find apps that request notifications before a paywall, search for the permission/warmup screen first and reject off-topic descriptions. If the paywall is an immediate neighbor, `screen_detail` supplies that local evidence. Otherwise use focused `app_screens` queries to retrieve both events inside each candidate app and compare true positions or timestamps.
 
 ## Flow Search
 

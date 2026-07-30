@@ -65,9 +65,9 @@ A compact recorded screen can contain:
 
 `app_screens` returns a single `app`, `app_video`, `pagination`, and `screens`. Batch mode returns `requested_app_ids`, `apps`, `app_replays`, `pagination_by_app`, and one combined `screens` list grouped in request order. When semantic narrowing is requested, the response also contains `query`; screens are relevance-ranked within each app while retaining their true replay `position` and `timestamp`. Each pagination total then counts searchable latest-replay screens for that app.
 
-`search_screens`, `find_similar_screens`, and `get_collection` normally return a top-level `apps` list plus compact `results`, so identity is not duplicated on every screen.
+`search_screens`, `find_similar_screens`, and `get_collection` normally return a top-level `apps` list plus compact `results`, so identity is not duplicated on every screen. `search_screens` also returns `max_per_app` and `relevance_guidance`; only latest-replay screens are eligible, and the guidance warns that results require description validation.
 
-`screen_detail` returns one detailed screen or batched `requested_screen_ids`, `count`, and `results`.
+`screen_detail` returns one detailed screen or batched `requested_screen_ids`, `count`, and `results`. Every detail includes `neighbors.previous[]` and `neighbors.next[]`, containing up to `neighbor_count` adjacent screens from that exact replay in chronological order. Neighbor records include true `position`, `timestamp`, description, image/deep links, and related flow references.
 
 ## Flows
 
