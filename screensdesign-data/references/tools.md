@@ -27,7 +27,7 @@ Default 20, maximum 100. Paginate with `limit` and `offset`.
 Important parameters:
 
 - `app_name`: full or partial brand name.
-- `smart_search`: semantic description of a concrete capability, audience, or problem. It controls relevance ordering and takes precedence over `sort`.
+- `smart_search`: semantic description of a concrete capability, audience, product mechanic, problem, or recorded UI behavior. It fuses app-description and recorded-screen relevance, controls result ordering, and takes precedence over `sort`.
 - `category`, `app_ids`, `exclude_app_ids`.
 - `detected_patterns`, `excluded_patterns` using the enum in the live schema.
 - `min/max_onboarding_steps`, `min/max_paywalls`, `min/max_quiz_questions`.
@@ -35,6 +35,8 @@ Important parameters:
 - `sort`: `revenue`, `downloads`, `updated`, `released`, `rating`, or `name` when semantic search is inactive.
 
 Do not put list intent such as “top subscription apps” into `smart_search`. Use `min_paywalls=1`, `sort="revenue"`, and other explicit filters instead.
+
+Smart-search results can include `match_sources` and up to two compact `matched_screen_evidence` records with exact replay links.
 
 ### `similar_apps(app_id=None, app_ids=None, limit=20, offset=0)`
 

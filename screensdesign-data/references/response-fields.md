@@ -35,6 +35,8 @@ MCP App UI metadata may carry app icons separately from the model-facing structu
 
 `search_apps` returns `app_name`, `smart_search`, `total`, `limit`, `offset`, applied `filters`, and `results`.
 
+When `smart_search` is active, each result can include `match_sources` (`app_description`, `recorded_screens`) and up to two `matched_screen_evidence` records. Each evidence record contains a screen ID, recorded-experience ID, exact timestamp, compact matching summary, and supplied exact-screen/replay links.
+
 Single-source `similar_apps` returns `source`, `total`, `limit`, `offset`, and `results`. Batch mode returns `sources`, `requested_app_ids`, merged `results`, `limit_per_source`, and per-source pagination; merged results include `similar_to_app_ids`.
 
 `app_detail` extends an app summary with:

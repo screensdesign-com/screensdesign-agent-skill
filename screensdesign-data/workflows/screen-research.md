@@ -48,3 +48,5 @@ For example, to find apps that request notifications before a paywall, search fo
 ## Output
 
 Separate observation from interpretation. Cite visible text and compact descriptions, link each app/screen/flow to the exact URL supplied with that object, and use replay-moment links for timing claims. Do not print raw positions, IDs, or guessed links.
+
+Never infer visible details from `visual_details_locked`. Use only the timestamp and replay URL supplied for the same screen; omit timing when exact evidence is unavailable.

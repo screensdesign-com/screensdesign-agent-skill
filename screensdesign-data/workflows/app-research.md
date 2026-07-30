@@ -6,7 +6,7 @@ Use this workflow for app and competitor discovery, rankings, selected-app detai
 
 - Known app, ScreensDesign URL, App Store URL, slug, store ID, or bundle: call `app_detail` directly.
 - Named brand search: use `search_apps(app_name=...)`.
-- Concrete capability, audience, or job: use `search_apps(smart_search=...)`.
+- Concrete capability, audience, job, product mechanic, or recorded UI behavior: use `search_apps(smart_search=...)`.
 - Ranked or filtered market list: leave `smart_search` empty and use explicit filters plus `sort`.
 - Alternatives to known apps: use `similar_apps`, batching up to 10 source IDs.
 - Publisher portfolio: use `search_developers`, then reuse returned `app_ids`.
@@ -15,7 +15,7 @@ Use this workflow for app and competitor discovery, rankings, selected-app detai
 
 - Apply category, revenue, download, rating, detected-pattern, onboarding, quiz, and paywall filters in the tool call when relevant.
 - Revenue and downloads are monthly estimates. For “around $20K”, a reasonable starting range is `min_revenue=15000`, `max_revenue=30000`; state the assumption.
-- `smart_search` ranks semantic neighbors. Check app names and short descriptions before treating them as relevant.
+- `smart_search` fuses app-description and recorded-screen relevance. Check app names, short descriptions, and `matched_screen_evidence` before treating results as relevant.
 - If semantic results are clearly off-topic, make at most one materially different retry—for example, use an exact app name or remove an overly restrictive filter. Do not retry synonyms indefinitely.
 - Paginate only when the user needs broader coverage or the first page is insufficient.
 

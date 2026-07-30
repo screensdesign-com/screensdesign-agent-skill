@@ -11,7 +11,7 @@ Server name convention: `screensdesign`. Scope: `mcp:read` (read-only; there are
 Install the versioned companion skill release:
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.2/screensdesign-data
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.3/screensdesign-data
 ```
 
 Update an existing installation:
