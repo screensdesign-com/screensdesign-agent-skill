@@ -5,13 +5,13 @@ description: Research mobile apps, competitors, onboarding, paywalls, recorded s
 
 # ScreensDesign Data
 
-Release: `1.0.3` · MCP contract: `2`
+Release: `1.0.4` · MCP contract: `2`
 
 Use ScreensDesign as an evidence-first mobile-app research source. Its hosted MCP is read-only and returns public app links, recorded-product evidence, App Store creatives, performance estimates, and saved collection context.
 
 ## Check This Skill Once
 
-When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.3"`.
+When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.4"`.
 
 - If the status is `current`, continue without discussing the check.
 - If it is `update_available`, continue when compatible and briefly tell the user an update exists.
@@ -44,7 +44,7 @@ The live MCP tool name, description, and input schema override local examples wh
 Choose tools by intent:
 
 - App discovery: `search_apps`; known-app similarity: `similar_apps`; selected-app evidence: `app_detail`.
-- Complete recorded order: `app_screens`; isolated UI concepts: `search_screens`; stored journeys: `search_flows`.
+- Focused UI inside known apps: `app_screens(query=...)`; complete recorded order: `app_screens` without a query; isolated UI concepts across the dataset: `search_screens`; stored journeys: `search_flows`.
 - Focused screen evidence: `screen_detail`; visual similarity: `find_similar_screens`.
 - App Store listing creatives: `search_store_screens`.
 - Publisher portfolios: `search_developers`.
@@ -52,7 +52,8 @@ Choose tools by intent:
 
 ## Sequence And Search Rules
 
-- Treat every `search_screens` result as an isolated candidate. It cannot prove what appeared before or after it. For sequence questions, find the candidate screen, collect app IDs, call `app_screens`, and compare positions or timestamps inside each replay.
+- Treat every `search_screens` result as an isolated candidate. It cannot prove what appeared before or after it. For sequence questions, find the candidate screen, collect app IDs, retrieve the needed events with focused `app_screens(query=...)` calls or an unfiltered replay page, and compare the true positions or timestamps inside each replay.
+- When app IDs are already known and only a particular screen type is needed, use a concrete visible-UI `app_screens` query and set `limit` to the number of matches needed per app. Leave `query` empty only when chronological replay coverage is required.
 - Use `search_flows(flow_id=...)` for one exact flow returned by `app_detail` or `search_flows`. Otherwise use a concise journey or stored flow-name concept such as `onboarding`, `subscription`, `checkout`, or `notification permission`. Do not use long temporal propositions as flow queries.
 - In `search_apps`, use `smart_search` for what an app does or what its recorded screens show, including concrete product mechanics or UI behavior. For “top”, “highest revenue”, or “most downloaded” lists, leave it empty and use filters plus `sort`.
 - `smart_search` is nearest-neighbor retrieval. Check names, short descriptions, and any `matched_screen_evidence`; make at most one materially different retry when results are clearly off-topic.

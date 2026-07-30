@@ -4,8 +4,9 @@ Use this workflow for recorded screens, onboarding/paywall sequence, stored flow
 
 ## Pick The Evidence Surface
 
-- Recorded in-app UI concept across apps: `search_screens`.
-- Complete latest replay in chronological order: `app_screens`.
+- Recorded in-app UI concept across unknown apps: `search_screens`.
+- Specific UI concept inside known apps: `app_screens(query=...)`.
+- Complete latest replay in chronological order: `app_screens` without `query`.
 - Stored journey or exact known flow: `search_flows`.
 - One or up to 10 known screen records: `screen_detail`.
 - Visual alternatives to a known or attached screen: `find_similar_screens`.
@@ -17,12 +18,12 @@ Use this workflow for recorded screens, onboarding/paywall sequence, stored flow
 
 1. Search for the most distinctive target screen.
 2. Collect the returned app IDs.
-3. Call `app_screens` for those apps.
+3. Retrieve each needed event inside those apps with a focused `app_screens` query. Use an unfiltered replay page only when focused results are insufficient.
 4. Locate both target events in the same replay.
 5. Compare returned position and timestamp evidence.
 6. Make the sequence claim only when both events and their order are present.
 
-For example, to find apps that request notifications before a paywall, search for the permission/warmup screen first, then inspect each candidate app's ordered replay for the paywall.
+For example, to find apps that request notifications before a paywall, search for the permission/warmup screen first, then use focused `app_screens` queries to retrieve the permission and paywall evidence inside each candidate app. Compare the true returned positions or timestamps; browse the unfiltered replay only when either event remains missing.
 
 ## Flow Search
 

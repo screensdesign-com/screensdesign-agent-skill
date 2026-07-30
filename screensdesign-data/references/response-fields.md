@@ -63,7 +63,7 @@ A compact recorded screen can contain:
 - `screensdesign_screen_deep_link_url`: specific-screen page.
 - `flows`: related flow references when available.
 
-`app_screens` returns a single `app`, `app_video`, `pagination`, and `screens`. Batch mode returns `requested_app_ids`, `apps`, `app_replays`, `pagination_by_app`, and one combined `screens` list grouped in request order.
+`app_screens` returns a single `app`, `app_video`, `pagination`, and `screens`. Batch mode returns `requested_app_ids`, `apps`, `app_replays`, `pagination_by_app`, and one combined `screens` list grouped in request order. When semantic narrowing is requested, the response also contains `query`; screens are relevance-ranked within each app while retaining their true replay `position` and `timestamp`. Each pagination total then counts searchable latest-replay screens for that app.
 
 `search_screens`, `find_similar_screens`, and `get_collection` normally return a top-level `apps` list plus compact `results`, so identity is not duplicated on every screen.
 

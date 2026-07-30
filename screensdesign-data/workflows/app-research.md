@@ -24,8 +24,8 @@ Use this workflow for app and competitor discovery, rankings, selected-app detai
 After discovering candidates:
 
 1. Call `app_detail` for only the selected apps; batch up to 10.
-2. Use `app_screens` when chronological recorded behavior matters.
-3. Use `search_screens` for a particular recorded UI concept across the shortlist.
+2. Use `app_screens(query=...)` for a particular recorded UI concept inside the selected apps.
+3. Use `app_screens` without `query` when complete chronological replay coverage matters; use `search_screens` for a UI concept across apps that are not yet known.
 4. Use `search_store_screens` for how the same apps market themselves on the App Store.
 5. Use `search_flows(flow_id=...)` when `app_detail` exposes a specific flow worth opening.
 

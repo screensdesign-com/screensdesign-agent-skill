@@ -50,9 +50,14 @@ Use `flows[].id` in an exact `search_flows(flow_id=...)` follow-up. `flows[].typ
 
 ## Recorded Screens And Flows
 
-### `app_screens(app_id=None, app_ids=None, limit=50, offset=0)`
+### `app_screens(app_id=None, app_ids=None, query="", limit=50, offset=0)`
 
-Browse a latest recorded experience in replay order for one app or up to 10. Maximum 50 screens per app per call. Batch results include independent pagination per app; continue with each `next_offset` when present. Use positions and timestamps to verify sequence.
+Browse a latest recorded experience for one app or up to 10. Maximum 50 screens per app per call, with independent pagination per app.
+
+- Leave `query` empty to browse chronologically.
+- Provide a concrete visible-UI `query` to rank matching screens independently inside each app's latest replay. The returned `position` and `timestamp` remain the true replay values even though matches are relevance-ranked.
+- Set `limit` to the number of matching screens needed per app. For example, `app_screens(app_ids=["340","512"], query="free trial toggle paywall", limit=1)` returns one focused candidate from each app.
+- Continue with each `next_offset` only when broader coverage is actually needed.
 
 ### `search_screens(query, ..., limit=20, offset=0)`
 
