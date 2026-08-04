@@ -12,10 +12,10 @@ The skill teaches agents how to:
 - Research developer portfolios and saved app collections.
 - Cite public ScreensDesign links without exposing internal handles or withheld premium content.
 
-## Install Version 1.0.2
+## Install Version 1.0.6
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.2/screensdesign-data
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.6/screensdesign-data
 ```
 
 Update an installed copy:
