@@ -1,6 +1,17 @@
 # ScreensDesign Response Fields
 
-The MCP returns compact public research objects, not raw database rows. Optional fields may be `null`, empty, or absent. Live output schemas override this reference.
+The MCP returns compact public research responses rather than internal records. Optional fields may be `null`, empty, or absent. Live output schemas override this reference.
+
+## Connected Account
+
+`get_me` returns:
+
+- `user.email` and the optional `user.name`.
+- `organization.id`: the organization's stable public identifier.
+- `organization.name` and the connected user's `organization.role`.
+- `organization.plan`: `free`, `pro`, or `ultra`.
+
+The organization is selected by the current credential. It may differ from the workspace the same user most recently selected on the ScreensDesign website.
 
 ## Shared App Objects
 
@@ -49,6 +60,33 @@ Single-source `similar_apps` returns `source`, `total`, `limit`, `offset`, and `
 - Optional `store_screens`: current App Store screenshot IDs.
 
 A batched app-detail response contains `requested_app_ids`, `count`, and `results`.
+
+## Broader Market Apps
+
+`search_market_apps.results`, `similar_market_apps.source`, `similar_market_apps.results`, and `market_app_detail` use a market-app summary containing:
+
+- `market_app_id`, `id`, `store_id`, and `name` as follow-up handles and public identity.
+- `short_description` and the 50–90-word `medium_description`.
+- `developer`, `developer_name`, and `category_primary`.
+- `revenue`, `downloads`, `revenue_month`, `rating_value`, and `released`.
+- `icon_url`, `appstore_url`, and `app_store_screenshots`.
+- `is_in_screensdesign_library`, plus `screensdesign_app_id` and `screensdesign_app_url` when recorded library content is available.
+
+Each `app_store_screenshots` item contains an internal follow-up `id`, `device`, `position`, `image_url`, and a source distinction between ScreensDesign library listing creatives and broader App Store listing creatives. These are App Store screenshots, not recorded in-app screens.
+
+`search_market_apps` also returns the applied query, filters, pagination, and a usage note. `similar_market_apps` adds the resolved `source` and optional `focus`. `market_app_detail` adds the full public App Store `description`.
+
+## App Store Reviews
+
+`app_store_reviews` returns:
+
+- `app`: resolved app name, developer, store ID, App Store URL, icon, short and medium descriptions, and ScreensDesign library availability.
+- `request`: normalized countries, optional ratings, requested maximum per country, and whether a new check was requested.
+- `metrics`: returned count and rating distribution for the returned evidence.
+- `countries`: one entry per country with `country`, `returned_reviews`, and newest matching `reviews`.
+- Each review contains only `date`, `rating`, and `text`.
+
+An unsuccessful request returns a concise corrective error. Do not infer that fewer-than-requested or zero matching reviews is an error when the tool returns a successful result.
 
 ## Recorded Screens
 

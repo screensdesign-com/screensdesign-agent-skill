@@ -11,7 +11,7 @@ Server name convention: `screensdesign`. Scope: `mcp:read` (read-only; there are
 Install the versioned companion skill release:
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.6/screensdesign-data
+npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
 ```
 
 Update an existing installation:
@@ -59,6 +59,6 @@ Cursor (`mcp.json`):
 - HTTP 401 with `{"detail": "..."}`: complete the OAuth browser login. The 401 response's `WWW-Authenticate` header carries the OAuth resource-metadata URL for discovery.
 - Tools not visible after adding the server: the client usually needs a new session or an MCP restart/refresh.
 - The server is stateless; each request authenticates independently, so there is no session to resume after token expiry — the client re-runs OAuth automatically.
-- Verify the connection by calling `describe_screensdesign_mcp`; it reports the authenticated scopes and auth method.
+- Verify which user and organization are connected by calling `get_me`. Use `describe_screensdesign_mcp` for authenticated scopes, auth method, access, and capabilities.
 - HTTP 429 means the current request window is exhausted; wait for the retry period supplied by the server.
 - Never print OAuth tokens, authorization codes, callback URLs, or refresh tokens in output.

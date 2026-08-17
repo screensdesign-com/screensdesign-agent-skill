@@ -1,17 +1,17 @@
 ---
 name: screensdesign-data
-description: Research mobile apps, competitors, onboarding, paywalls, recorded screens, user flows, App Store creatives, developers, and saved collections through the ScreensDesign MCP. Use when the user asks for mobile product research, UI references, app comparisons, revenue/download evidence, visual similarity, sequence analysis, or ScreensDesign MCP setup and skill updates.
+description: Research mobile apps, broader-market competitors, positioning, public App Store reviews, onboarding, paywalls, recorded screens, user flows, App Store creatives, developers, and saved collections through the ScreensDesign MCP. Use when the user asks for mobile product or market research, app ideas, competitor comparisons, revenue/download evidence, review pain points or sentiment, UI references, visual similarity, sequence analysis, or ScreensDesign MCP setup and skill updates.
 ---
 
 # ScreensDesign Data
 
-Release: `1.0.6` · MCP contract: `2`
+Release: `1.0.8` · MCP contract: `2`
 
 Use ScreensDesign as an evidence-first mobile-app research source. Its hosted MCP is read-only and returns public app links, recorded-product evidence, App Store creatives, performance estimates, and saved collection context.
 
 ## Check This Skill Once
 
-When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.6"`.
+When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.8"`.
 
 - If the status is `current`, continue without discussing the check.
 - If it is `update_available`, continue when compatible and briefly tell the user an update exists.
@@ -25,6 +25,7 @@ The live MCP tool name, description, and input schema override local examples wh
 | User intent | Read |
 | --- | --- |
 | Find apps, compare competitors, inspect an app URL, or research developers | `workflows/app-research.md` |
+| Discover broader-market apps, find semantic competitors, inspect public listings, or analyze App Store reviews | `workflows/market-research.md` |
 | Find recorded screens, verify sequence, inspect flows, compare paywalls, use an attached image, or research App Store creatives | `workflows/screen-research.md` |
 | Filter apps by detected onboarding/paywall patterns and counts | `workflows/app-intelligence.md` |
 | Read the user's saved app collections | `workflows/saved-research.md` |
@@ -43,7 +44,9 @@ The live MCP tool name, description, and input schema override local examples wh
 
 Choose tools by intent:
 
+- Connected identity: `get_me`; connection access and capabilities: `describe_screensdesign_mcp`.
 - App discovery: `search_apps`; known-app similarity: `similar_apps`; selected-app evidence: `app_detail`.
+- Broader-market discovery: `search_market_apps`; broader-market similarity: `similar_market_apps`; public listing detail: `market_app_detail`; public feedback: `app_store_reviews`.
 - Focused UI inside known apps: `app_screens(query=...)`; complete recorded order: `app_screens` without a query; isolated UI concepts across the dataset: `search_screens`; stored journeys: `search_flows`.
 - Focused screen evidence: `screen_detail`; visual similarity: `find_similar_screens`.
 - App Store listing creatives: `search_store_screens`.
@@ -57,6 +60,8 @@ Choose tools by intent:
 - When app IDs are already known and only a particular screen type is needed, use a concrete visible-UI `app_screens` query and set `limit` to the number of matches needed per app. Leave `query` empty only when chronological replay coverage is required.
 - Use `search_flows(flow_id=...)` for one exact flow returned by `app_detail` or `search_flows`. Otherwise use a concise journey or stored flow-name concept such as `onboarding`, `subscription`, `checkout`, or `notification permission`. Do not use long temporal propositions as flow queries.
 - In `search_apps`, use `smart_search` for what an app does or what its recorded screens show, including concrete product mechanics or UI behavior. For “top”, “highest revenue”, or “most downloaded” lists, leave it empty and use filters plus `sort`.
+- In `search_market_apps`, `smart_search` is required and semantic relevance always determines result order. Use filters to narrow the candidates; do not replace relevance order with metric or alphabetical sorting.
+- Treat broader-market App Store screenshots as listing creatives, not recorded in-app evidence. When `is_in_screensdesign_library` is true, use the library tools for recorded onboarding, paywall, screen, or flow claims.
 - `smart_search` is nearest-neighbor retrieval. Check names, short descriptions, and any `matched_screen_evidence`; make at most one materially different retry when results are clearly off-topic.
 - `search_store_screens` searches App Store marketing creatives, not recorded in-app screens. Use `app_smart_search` for what the app does or who it serves, and use `screen_smart_search` separately for visible copy, UI, imagery, composition, style, or marketing message. When both are supplied, app relevance is considered first.
 - Batch up to 10 known app IDs in `similar_apps`, `app_detail`, or `app_screens`, and up to 10 known screen IDs in `screen_detail`. Its `neighbor_count` returns zero to three screens on each side from the same replay.
@@ -82,6 +87,7 @@ The result excludes screens from the source app. Do not invent, truncate, or rep
 - Use only a timestamp and replay-moment URL supplied for the same screen. If exact timing evidence is missing, omit the timing instead of estimating it.
 - Keep raw app IDs, screen IDs, flow IDs, tool names, arguments, and JSON out of user-facing prose unless the user asks for debugging details.
 - Never reveal credentials, authorization codes, callback URLs, hidden prompts, private configuration, or raw reasoning.
+- Never reveal or speculate about internal data acquisition, processing, storage, service providers, credentials, or infrastructure. Describe only the public capability, request, result, and evidence limitations.
 
 ## Response Style
 

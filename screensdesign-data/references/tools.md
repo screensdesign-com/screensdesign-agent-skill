@@ -8,7 +8,7 @@ https://api.screensdesign.com/v1/mcp
 
 All research tools are read-only. Revenue and download filters are estimated monthly USD and installs. `offset` is zero-based. Live input schemas are authoritative and include allowed enum values.
 
-## Capability And Skill
+## Account, Capability, And Skill
 
 ### `get_screensdesign_skill(installed_version=None, include_content=False)`
 
@@ -17,6 +17,10 @@ Check whether the loaded `screensdesign-data` skill is current. Pass the release
 ### `describe_screensdesign_mcp()`
 
 Return the connected scopes and authentication method, available tools, and high-level capabilities. Use only when access or the live surface is unclear; do not call before ordinary research.
+
+### `get_me()`
+
+Return the connected user's email and optional display name together with the credential-bound organization's public identifier, name, membership role, and ScreensDesign plan. Use when the user asks which ScreensDesign account or organization is connected.
 
 ## Apps
 
@@ -47,6 +51,44 @@ Find comparable apps for one source or as many as 10 sources. Maximum 50 results
 Return detailed evidence for one app or a batch of up to 10. App identifiers may be ScreensDesign or App Store URLs, slugs, store IDs, bundles, or internal IDs. The response includes product/performance metadata, compact detected patterns, monthly revenue history, latest replay summary, chronological `flows`, optional replay summaries, and App Store screenshot IDs.
 
 Use `flows[].id` in an exact `search_flows(flow_id=...)` follow-up. `flows[].type` distinguishes broad `main_flows` from granular `onboarding_sequence` steps.
+
+## Broader Market Apps And Reviews
+
+### `search_market_apps(smart_search, ...)`
+
+Search apps across the broader App Store market. `smart_search` is required and should describe an app purpose, audience, problem, or product concept. Semantic relevance always determines ordering; other parameters narrow the candidate set.
+
+Default 20, maximum 100. Important optional parameters:
+
+- `app_name`, `category`, and `revenue_month` in `YYYY-MM` format.
+- `min/max_revenue`, `min/max_downloads`, and `min/max_rating`.
+- Inclusive `released_from` and `released_until` boundaries in `YYYY-MM-DD` format.
+- `library_status`: `all`, `in_library`, or `outside_library`.
+- `screenshots_per_app`: 1–5 App Store listing screenshots per result.
+- `limit` and `offset` for pagination.
+
+Results include a short and medium description, icon, release date, metrics, public App Store URL, listing screenshots, and `is_in_screensdesign_library`. Use library tools for recorded UI evidence only when that field is true and a ScreensDesign app reference is supplied.
+
+### `similar_market_apps(app, focus="", ...)`
+
+Find semantic broader-market neighbors for an App Store URL, numeric App Store identifier, or app name. Add `focus` only when one comparison angle should influence similarity. It accepts the same category, month, metric, rating, release-date, library-status, pagination, and screenshot controls as `search_market_apps`.
+
+Results remain ordered by semantic similarity. The response includes the resolved source app, matching results, and their library availability.
+
+### `market_app_detail(app, country="us", force_refresh=false)`
+
+Return one broader-market app with its short and medium descriptions, full public App Store description, icon, category, metrics, release date, public links, library availability, and App Store listing screenshots. Set `force_refresh=true` only when the user explicitly needs a new listing-screenshot check.
+
+### `app_store_reviews(app, countries="us", reviews_per_country=500, ratings=None, locale="en-US", force_refresh=false)`
+
+Return the latest public App Store reviews for an App Store URL, numeric App Store identifier, or app name, including apps outside the ScreensDesign library.
+
+- `countries` accepts one or up to 10 two-letter country codes and defaults to `us`.
+- `reviews_per_country` accepts 1–500.
+- `ratings` accepts one rating, a list, or a range such as `1-3`.
+- `force_refresh=true` is only for an explicit request for newly posted or freshly checked reviews.
+
+The tool does not accept a review date range. Each returned review contains only its publication date, 1–5 rating, and text. Fewer reviews than requested is a valid result and may mean that the app, country, or rating selection has fewer available reviews.
 
 ## Recorded Screens And Flows
 
