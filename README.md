@@ -1,54 +1,119 @@
 # ScreensDesign Agent Skill
 
-Versioned companion instructions for using the hosted ScreensDesign MCP from Codex, Claude Code, Cursor, and other skill-aware agents.
+**Give your AI agent real app screens, complete flows, and market context to work from.**
 
-The skill teaches agents how to:
+Research competitors, compare onboarding and paywalls, explore App Store reviews, and find visual references with the [ScreensDesign MCP](https://screensdesign.com/mcp/). Bring the evidence into Claude Code, Codex, Cursor, and other agents that support skills and MCP.
 
-- Discover and compare mobile apps using product, category, performance, and detected-pattern filters.
-- Inspect detailed app evidence, recorded screens, chronological replays, and stored user flows.
-- Verify before/after sequence claims instead of treating isolated screen matches as a full replay.
-- Search App Store marketing creatives separately from recorded in-app UI.
-- Find screens visually similar to a ScreensDesign screen or external reference image.
-- Research developer portfolios and saved app collections.
-- Cite public ScreensDesign links without exposing internal handles or withheld premium content.
+[Website](https://screensdesign.com) · [Connect the MCP](https://screensdesign.com/mcp/) · [Browse on skills.sh](https://skills.sh/screensdesign-com/screensdesign-agent-skill) · [Releases](https://github.com/screensdesign-com/screensdesign-agent-skill/releases)
 
-## Install Version 1.0.8
+[![skills.sh installs](https://skills.sh/b/screensdesign-com/screensdesign-agent-skill)](https://skills.sh/screensdesign-com/screensdesign-agent-skill)
+
+## Install
+
+Run this from your project root:
 
 ```bash
-npx -y skills add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data
+```
+
+Then [connect the ScreensDesign MCP](#connect-the-screensdesign-mcp). The skill provides research instructions; the MCP provides access to the data through your ScreensDesign account.
+
+<details>
+<summary>Agent-specific, global, and versioned installation</summary>
+
+Install for specific agents without prompts:
+
+```bash
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -a claude-code -a codex -a cursor -y
+```
+
+Install across your projects:
+
+```bash
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -g
+```
+
+Install the exact **v1.0.8** release:
+
+```bash
+npx skills@latest add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
 ```
 
 Update an installed copy:
 
 ```bash
-npx skills update screensdesign-data
+npx skills@latest update screensdesign-data
 ```
 
-The skill declares its release near the top of `SKILL.md`. When the hosted MCP is connected, the agent calls `get_screensdesign_skill` once with that version to learn whether the installation is current, compatible, or needs an update.
+</details>
 
-## Connect The Hosted MCP
+## What the skill does
 
-Endpoint:
+[`screensdesign-data`](screensdesign-data/SKILL.md) teaches your agent how to choose the right research tools, inspect the evidence, and return useful findings with source links.
+
+| Research task | What you get |
+| --- | --- |
+| Discover apps and competitors | Apps matched by product, category, positioning, or recorded UI, with revenue and download estimates where available. |
+| Study onboarding and paywalls | Recorded screens, chronological replays, and stored flows that show how a journey unfolds. |
+| Find UI references | Relevant screens across apps, focused searches within an app, and visual matches to a reference image. |
+| Explore the broader app market | Competitor discovery, public app listings, and App Store reviews for researching recurring complaints and positioning. |
+| Research App Store creatives | Marketing screenshots searched separately from recorded in-app screens. |
+| Continue saved research | Your saved app collections and developer portfolios brought into the conversation. |
+
+The skill checks replay context before making claims about screen order and links findings to the supplied app, screen, or flow sources. It distinguishes observed UI from inference and treats revenue and downloads as performance signals, not proof of conversion.
+
+## Try it
+
+With the skill installed and the MCP connected, ask your agent:
+
+> Compare onboarding in three high-revenue habit trackers. Show the recorded screens in order and where each paywall appears.
+
+> Find apps similar to my sleep app idea. Compare their positioning and summarize recurring complaints in their public App Store reviews.
+
+> Find paywalls that show an annual subscription as a price per day. Link to the actual screens.
+
+> Find app screens visually similar to this screenshot. Explain which layout and navigation patterns are shared.
+
+> Compare the App Store screenshot messaging of three meditation apps. Which benefits does each lead with?
+
+> Open my saved app collection and compare the onboarding patterns across its apps.
+
+## Connect the ScreensDesign MCP
+
+Add this hosted endpoint to your MCP client and sign in with your ScreensDesign account:
 
 ```text
 https://api.screensdesign.com/v1/mcp
 ```
 
-Claude Code:
+MCP access is included with [ScreensDesign Pro](https://screensdesign.com/mcp/). See the [setup page](https://screensdesign.com/mcp/) for supported clients and access details.
+
+<details>
+<summary>Claude Code</summary>
 
 ```bash
 claude mcp add --transport http screensdesign "https://api.screensdesign.com/v1/mcp" --scope user
 claude mcp login screensdesign
 ```
 
-Codex:
+You can also open `/mcp` inside Claude Code to check the connection and authenticate.
+
+</details>
+
+<details>
+<summary>Codex</summary>
 
 ```bash
 codex mcp add screensdesign --url 'https://api.screensdesign.com/v1/mcp'
 codex mcp login screensdesign
 ```
 
-Cursor:
+</details>
+
+<details>
+<summary>Cursor</summary>
+
+Add this server to your Cursor MCP configuration:
 
 ```json
 {
@@ -60,37 +125,34 @@ Cursor:
 }
 ```
 
-The server uses browser OAuth, is stateless, and exposes read-only research tools. A client may need a new conversation or MCP refresh after configuration.
+Complete the browser sign-in when prompted.
 
-## Repository Structure
+</details>
 
-```text
-screensdesign-data/
-|-- SKILL.md
-|-- agents/openai.yaml
-|-- workflows/
-|   |-- app-research.md
-|   |-- screen-research.md
-|   |-- app-intelligence.md
-|   |-- saved-research.md
-|   `-- completion-followups.md
-`-- references/
-    |-- tools.md
-    |-- response-fields.md
-    `-- connection.md
-```
+Authentication uses browser OAuth. If the tools do not appear after setup, refresh the MCP connection or start a new conversation. See [connection troubleshooting](screensdesign-data/references/connection.md) for more detail.
 
-`SKILL.md` stays compact and routes the agent to focused supporting files only when needed.
+## How it works
 
-## Release Process
+The skill stays compact and loads focused guides for [app research](screensdesign-data/workflows/app-research.md), [market and review research](screensdesign-data/workflows/market-research.md), [screen and flow research](screensdesign-data/workflows/screen-research.md), [app intelligence](screensdesign-data/workflows/app-intelligence.md), and [saved collections](screensdesign-data/workflows/saved-research.md) as needed.
 
-Every published release uses a semantic Git tag such as `v1.0.2`. The tag must match the release declared in `screensdesign-data/SKILL.md`.
+The [tool reference](screensdesign-data/references/tools.md) and [response field guide](screensdesign-data/references/response-fields.md) document the research interface. Live MCP schemas take precedence when a tool changes.
 
-Run the release builder before tagging:
+The current data-skill release is **1.0.8**. When connected, the agent checks its installed version once per conversation through `get_screensdesign_skill` to learn whether it is current or needs an update.
+
+<details>
+<summary>For maintainers: release process</summary>
+
+Each release uses a semantic Git tag matching the version declared in `screensdesign-data/SKILL.md`. For the current release:
 
 ```bash
-python scripts/build_release.py --write-manifest
-python scripts/build_release.py --check --tag v1.0.2
+python3 scripts/build_release.py --write-manifest
+python3 scripts/build_release.py --check --tag v1.0.8
 ```
 
-The release manifest records the immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release containing the ZIP and manifest. The hosted MCP vendors that exact package so authenticated clients can read the current `SKILL.md` or download the release through MCP resources.
+The release manifest records immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release with the ZIP and manifest. The hosted MCP vendors that exact package for authenticated clients to read or download through MCP resources.
+
+</details>
+
+---
+
+Built by [ScreensDesign](https://screensdesign.com) — real app screens, recorded flows, and market intelligence for your next product decision.
