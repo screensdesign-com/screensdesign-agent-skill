@@ -18,14 +18,14 @@ Broader-market apps can support app-idea, competitor, positioning, metric, relea
 2. Add only relevant category, metric month, revenue, download, rating, release-date, and library-status filters.
 3. Keep the returned semantic-relevance order. Do not request or imply revenue, download, rating, or alphabetical sorting.
 4. Check names and medium descriptions before selecting candidates. Make at most one materially different retry when results are clearly off-topic.
-5. Use `market_app_detail` for selected listings or `similar_market_apps` for semantic neighbors.
+5. Use `market_app_detail` for selected listings or `similar_market_apps` for semantic neighbors. Prefer `app="store:<store_id>"` using the selected result's `store_id`; returned `market_detail_id` remains supported.
 6. For results available in the ScreensDesign library, use their supplied ScreensDesign references with library tools when recorded UI evidence would improve the answer.
 
 Treat returned App Store screenshots as listing creatives. Do not describe them as recorded app screens or infer in-app sequence and behavior from them.
 
 ## Public Review Research
 
-1. Resolve one specific app by App Store URL, numeric App Store identifier, or app name.
+1. Resolve one specific app. Prefer `app="store:<store_id>"` from a returned `store_id`; a supplied App Store URL or app name also works. Check the resolved name and developer. For ambiguity, select the intended candidate and retry with its store identifier; if unclear, ask the user. Never combine reviews from different candidates.
 2. Use the US by default. Request other countries only when geography matters.
 3. Request only the number of reviews needed, up to 500 per country. Apply a rating selection only when it helps answer the question.
 4. Set `force_refresh=true` only when the user explicitly asks for newly posted, freshly checked, or current reviews.

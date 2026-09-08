@@ -8,6 +8,8 @@ https://api.screensdesign.com/v1/mcp
 
 All research tools are read-only. Revenue and download filters are estimated monthly USD and installs. `offset` is zero-based. Live input schemas are authoritative and include allowed enum values.
 
+Follow the [app identifier convention](../SKILL.md#app-identifier-convention): prefer `store:<store_id>` from a returned `store_id` for app-target arguments. Keep screen and flow IDs unchanged, and resolve ambiguous app candidates before fetching their evidence.
+
 ## Account, Capability, And Skill
 
 ### `get_screensdesign_skill(installed_version=None, include_content=False)`
@@ -71,7 +73,7 @@ Results include a short and medium description, icon, release date, metrics, pub
 
 ### `similar_market_apps(app, focus="", ...)`
 
-Find semantic broader-market neighbors for an App Store URL, numeric App Store identifier, or app name. Add `focus` only when one comparison angle should influence similarity. It accepts the same category, month, metric, rating, release-date, library-status, pagination, and screenshot controls as `search_market_apps`.
+Find semantic broader-market neighbors for `store:<store_id>` (preferred), an App Store URL, or an app name. Add `focus` only when one comparison angle should influence similarity. It accepts the same category, month, metric, rating, release-date, library-status, pagination, and screenshot controls as `search_market_apps`.
 
 Results remain ordered by semantic similarity. The response includes the resolved source app, matching results, and their library availability.
 
@@ -81,7 +83,7 @@ Return one broader-market app with its short and medium descriptions, full publi
 
 ### `app_store_reviews(app, countries="us", reviews_per_country=500, ratings=None, locale="en-US", force_refresh=false)`
 
-Return the latest public App Store reviews for an App Store URL, numeric App Store identifier, or app name, including apps outside the ScreensDesign library.
+Return the latest public App Store reviews for `store:<store_id>` (preferred), an App Store URL, or an app name, including apps outside the ScreensDesign library. Ambiguity supplies candidates: select the intended app and retry using its store identifier; do not fetch or combine every candidate's reviews.
 
 - `countries` accepts one or up to 10 two-letter country codes and defaults to `us`.
 - `reviews_per_country` accepts 1–500.

@@ -41,10 +41,10 @@ Install across your projects:
 npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -g
 ```
 
-Install the exact **v1.0.8** release:
+Install the exact **v1.0.9** release:
 
 ```bash
-npx skills@latest add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
+npx skills@latest add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.9/screensdesign-data
 ```
 
 Update an installed copy:
@@ -145,7 +145,7 @@ The skill stays compact and loads focused guides for [app research](screensdesig
 
 The [tool reference](screensdesign-data/references/tools.md) and [response field guide](screensdesign-data/references/response-fields.md) document the research interface. Live MCP schemas take precedence when a tool changes.
 
-The current data-skill release is **1.0.8**. When connected, the agent checks its installed version once per conversation through `get_screensdesign_skill` to learn whether it is current or needs an update.
+The current data-skill release is **1.0.9**. When connected, the agent checks its installed version once per conversation through `get_screensdesign_skill` to learn whether it is current or needs an update.
 
 <details>
 <summary>For maintainers: release process</summary>
@@ -154,7 +154,7 @@ Each release uses a semantic Git tag matching the version declared in `screensde
 
 ```bash
 python3 scripts/build_release.py --write-manifest
-python3 scripts/build_release.py --check --tag v1.0.8
+python3 scripts/build_release.py --check --tag v1.0.9
 ```
 
 The release manifest records immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release with the ZIP and manifest. The hosted MCP vendors that exact package for authenticated clients to read or download through MCP resources.

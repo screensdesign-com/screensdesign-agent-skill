@@ -5,13 +5,13 @@ description: Research mobile apps, broader-market competitors, positioning, publ
 
 # ScreensDesign Data
 
-Release: `1.0.8` · MCP contract: `2`
+Release: `1.0.9` · MCP contract: `2`
 
 Use ScreensDesign as an evidence-first mobile-app research source. Its hosted MCP is read-only and returns public app links, recorded-product evidence, App Store creatives, performance estimates, and saved collection context.
 
 ## Check This Skill Once
 
-When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.8"`.
+When `get_screensdesign_skill` is available, call it once per conversation before the first ScreensDesign research call and pass `installed_version="1.0.9"`.
 
 - If the status is `current`, continue without discussing the check.
 - If it is `update_available`, continue when compatible and briefly tell the user an update exists.
@@ -52,6 +52,14 @@ Choose tools by intent:
 - App Store listing creatives: `search_store_screens`.
 - Publisher portfolios: `search_developers`.
 - Saved research: `list_collections`, then `get_collection`.
+
+## App Identifier Convention
+
+- For app-target arguments, prefer `store:<store_id>` using the exact `store_id` returned by discovery or resolution. The same value works in `app`, `app_id`, `app_ids`, and app inclusion/exclusion filters; use the parameter name required by the live schema.
+- Never prefix a generic `id`, `market_app_id`, screen ID, or flow ID with `store:`. If a result has only a library app ID, reuse that returned identifier or `library:<id>`; a returned `market_detail_id` remains valid for market tools.
+- A supplied App Store URL is valid for the initial call. Its numeric ID is authoritative even if the URL title looks different. Check the returned app name, developer, and store ID before using evidence.
+- Discover unfamiliar names first. When a result offers candidates, select the intended product and developer and retry once with `store:<store_id>`. If the intended app remains unclear, ask the user; never silently substitute a similar app, merge different apps' reviews, or repeat the unchanged failed call.
+- A store identifier does not imply recorded-content availability. Use library tools for recorded screens/flows only when the app has library evidence. Keep screen and flow identifiers in their own namespaces.
 
 ## Sequence And Search Rules
 

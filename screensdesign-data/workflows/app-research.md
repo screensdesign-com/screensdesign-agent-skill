@@ -4,7 +4,7 @@ Use this workflow for app and competitor discovery, rankings, selected-app detai
 
 ## Choose The First Call
 
-- Known app, ScreensDesign URL, App Store URL, slug, store ID, or bundle: call `app_detail` directly.
+- Known exact identifier or supplied ScreensDesign/App Store URL: call `app_detail` directly. Prefer `store:<store_id>` when a returned `store_id` is available; discover unfamiliar names first.
 - Named brand search: use `search_apps(app_name=...)`.
 - Concrete capability, audience, job, product mechanic, or recorded UI behavior: use `search_apps(smart_search=...)`.
 - Ranked or filtered market list: leave `smart_search` empty and use explicit filters plus `sort`.
@@ -23,7 +23,7 @@ Use this workflow for app and competitor discovery, rankings, selected-app detai
 
 After discovering candidates:
 
-1. Call `app_detail` for only the selected apps; batch up to 10.
+1. Call `app_detail` for only the selected apps; batch up to 10. Prefer `app_ids` containing `store:<store_id>` values from those results; never convert a library or market row ID into a store ID.
 2. Use `app_screens(query=...)` for a particular recorded UI concept inside the selected apps.
 3. Use `app_screens` without `query` when complete chronological replay coverage matters; use `search_screens` for a UI concept across apps that are not yet known.
 4. Use `search_store_screens` for how the same apps market themselves on the App Store.
