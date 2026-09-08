@@ -1,3 +1,11 @@
+<a href="https://screensdesign.com">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/screensdesign-logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/screensdesign-logo.svg">
+    <img alt="ScreensDesign" src="assets/screensdesign-logo.svg" width="216" height="29">
+  </picture>
+</a>
+
 # ScreensDesign Agent Skill
 
 **Give your AI agent real app screens, complete flows, and market context to work from.**
@@ -152,6 +160,10 @@ python3 scripts/build_release.py --check --tag v1.0.8
 The release manifest records immutable content and ZIP hashes. Pushing the matching tag validates the package and creates a GitHub Release with the ZIP and manifest. The hosted MCP vendors that exact package for authenticated clients to read or download through MCP resources.
 
 </details>
+
+## License
+
+[MIT](LICENSE) © 2026 ScreensDesign. The ScreensDesign name and logo are brand assets; this license does not grant trademark rights.
 
 ---
 
