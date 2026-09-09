@@ -139,6 +139,12 @@ Complete the browser sign-in when prompted.
 
 Authentication uses browser OAuth. If the tools do not appear after setup, refresh the MCP connection or start a new conversation. See [connection troubleshooting](screensdesign-data/references/connection.md) for more detail.
 
+## MCP registry metadata
+
+[`server.json`](server.json) describes the hosted ScreensDesign MCP server for the official MCP Registry under `com.screensdesign/screensdesign`. It includes the remote endpoint, display name, icon, and setup link. Registry metadata version `1.0.0` is maintained separately from the data-skill release.
+
+The endpoint uses browser OAuth; complete sign-in in your MCP client. This repository contains the companion skill and registry metadata. The hosted server implementation and ScreensDesign data are operated separately.
+
 ## How it works
 
 The skill stays compact and loads focused guides for [app research](screensdesign-data/workflows/app-research.md), [market and review research](screensdesign-data/workflows/market-research.md), [screen and flow research](screensdesign-data/workflows/screen-research.md), [app intelligence](screensdesign-data/workflows/app-intelligence.md), and [saved collections](screensdesign-data/workflows/saved-research.md) as needed.

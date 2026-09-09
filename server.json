@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.screensdesign/screensdesign",
+  "title": "ScreensDesign",
+  "description": "Research mobile apps, onboarding, paywalls, and competitors with real screens, flows, and reviews.",
+  "version": "1.0.0",
+  "websiteUrl": "https://screensdesign.com/mcp/",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/screensdesign-com/screensdesign-agent-skill/main/assets/screensdesign-icon.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "192x192"
+      ]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.screensdesign.com/v1/mcp"
+    }
+  ]
+}
