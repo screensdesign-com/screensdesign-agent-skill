@@ -6,89 +6,21 @@
   </picture>
 </a>
 
-# ScreensDesign Agent Skill
+# ScreensDesign MCP
 
 **Give your AI agent real app screens, complete flows, and market context to work from.**
 
-Research competitors, compare onboarding and paywalls, explore App Store reviews, and find visual references with the [ScreensDesign MCP](https://screensdesign.com/mcp/). Bring the evidence into Claude Code, Codex, Cursor, and other agents that support skills and MCP.
+The [ScreensDesign MCP](https://screensdesign.com/mcp/) is a hosted server for researching mobile apps, comparing onboarding and paywalls, exploring App Store reviews, and finding visual references. Connect it to your MCP client to bring real screens, recorded flows, and market context into your research.
+
+This public repository contains setup documentation, registry metadata, and the optional `screensdesign-data` companion skill. The hosted server implementation and ScreensDesign data are operated separately.
 
 [Website](https://screensdesign.com) · [Connect the MCP](https://screensdesign.com/mcp/) · [Browse on skills.sh](https://skills.sh/screensdesign-com/screensdesign-agent-skill) · [Releases](https://github.com/screensdesign-com/screensdesign-agent-skill/releases)
 
 [![skills.sh installs](https://skills.sh/b/screensdesign-com/screensdesign-agent-skill)](https://skills.sh/screensdesign-com/screensdesign-agent-skill)
 
-## Install
-
-Run this from your project root:
-
-```bash
-npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data
-```
-
-Then [connect the ScreensDesign MCP](#connect-the-screensdesign-mcp). The skill provides research instructions; the MCP provides access to the data through your ScreensDesign account.
-
-<details>
-<summary>Agent-specific, global, and versioned installation</summary>
-
-Install for specific agents without prompts:
-
-```bash
-npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -a claude-code -a codex -a cursor -y
-```
-
-Install across your projects:
-
-```bash
-npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -g
-```
-
-Install the exact **v1.0.8** release:
-
-```bash
-npx skills@latest add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
-```
-
-Update an installed copy:
-
-```bash
-npx skills@latest update screensdesign-data
-```
-
-</details>
-
-## What the skill does
-
-[`screensdesign-data`](screensdesign-data/SKILL.md) teaches your agent how to choose the right research tools, inspect the evidence, and return useful findings with source links.
-
-| Research task | What you get |
-| --- | --- |
-| Discover apps and competitors | Apps matched by product, category, positioning, or recorded UI, with revenue and download estimates where available. |
-| Study onboarding and paywalls | Recorded screens, chronological replays, and stored flows that show how a journey unfolds. |
-| Find UI references | Relevant screens across apps, focused searches within an app, and visual matches to a reference image. |
-| Explore the broader app market | Competitor discovery, public app listings, and App Store reviews for researching recurring complaints and positioning. |
-| Research App Store creatives | Marketing screenshots searched separately from recorded in-app screens. |
-| Continue saved research | Your saved app collections and developer portfolios brought into the conversation. |
-
-The skill checks replay context before making claims about screen order and links findings to the supplied app, screen, or flow sources. It distinguishes observed UI from inference and treats revenue and downloads as performance signals, not proof of conversion.
-
-## Try it
-
-With the skill installed and the MCP connected, ask your agent:
-
-> Compare onboarding in three high-revenue habit trackers. Show the recorded screens in order and where each paywall appears.
-
-> Find apps similar to my sleep app idea. Compare their positioning and summarize recurring complaints in their public App Store reviews.
-
-> Find paywalls that show an annual subscription as a price per day. Link to the actual screens.
-
-> Find app screens visually similar to this screenshot. Explain which layout and navigation patterns are shared.
-
-> Compare the App Store screenshot messaging of three meditation apps. Which benefits does each lead with?
-
-> Open my saved app collection and compare the onboarding patterns across its apps.
-
 ## Connect the ScreensDesign MCP
 
-Add this hosted endpoint to your MCP client and sign in with your ScreensDesign account:
+Add this hosted endpoint to your MCP client using Streamable HTTP and sign in with your ScreensDesign account:
 
 ```text
 https://api.screensdesign.com/v1/mcp
@@ -139,9 +71,83 @@ Complete the browser sign-in when prompted.
 
 Authentication uses browser OAuth. If the tools do not appear after setup, refresh the MCP connection or start a new conversation. See [connection troubleshooting](screensdesign-data/references/connection.md) for more detail.
 
+## What the MCP does
+
+The server provides tools for researching apps, screens, flows, reviews, and saved collections:
+
+| Research task | What you get |
+| --- | --- |
+| Discover apps and competitors | Apps matched by product, category, positioning, or recorded UI, with revenue and download estimates where available. |
+| Study onboarding and paywalls | Recorded screens, chronological replays, and stored flows that show how a journey unfolds. |
+| Find UI references | Relevant screens across apps, focused searches within an app, and visual matches to a reference image. |
+| Explore the broader app market | Competitor discovery, public app listings, and App Store reviews for researching recurring complaints and positioning. |
+| Research App Store creatives | Marketing screenshots searched separately from recorded in-app screens. |
+| Continue saved research | Your saved app collections and developer portfolios brought into the conversation. |
+
+The optional [`screensdesign-data`](screensdesign-data/SKILL.md) skill guides agents to check replay context before making claims about screen order and link findings to the supplied app, screen, or flow sources. It distinguishes observed UI from inference and treats revenue and downloads as performance signals, not proof of conversion.
+
+## Try it
+
+With the MCP connected, ask your agent:
+
+> Compare onboarding in three high-revenue habit trackers. Show the recorded screens in order and where each paywall appears.
+
+> Find apps similar to my sleep app idea. Compare their positioning and summarize recurring complaints in their public App Store reviews.
+
+> Find paywalls that show an annual subscription as a price per day. Link to the actual screens.
+
+> Find app screens visually similar to this screenshot. Explain which layout and navigation patterns are shared.
+
+> Compare the App Store screenshot messaging of three meditation apps. Which benefits does each lead with?
+
+> Open my saved app collection and compare the onboarding patterns across its apps.
+
+## Optional companion skill
+
+The MCP works without installing a skill. For agents that support skills, `screensdesign-data` adds guidance on choosing research tools, checking evidence, and citing sources.
+
+Run this from your project root:
+
+```bash
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data
+```
+
+Then [connect the ScreensDesign MCP](#connect-the-screensdesign-mcp). The skill provides research instructions; the MCP provides access to the data through your ScreensDesign account.
+
+<details>
+<summary>Agent-specific, global, and versioned installation</summary>
+
+Install for specific agents without prompts:
+
+```bash
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -a claude-code -a codex -a cursor -y
+```
+
+Install across your projects:
+
+```bash
+npx skills@latest add screensdesign-com/screensdesign-agent-skill --skill screensdesign-data -g
+```
+
+Install the exact **v1.0.8** release:
+
+```bash
+npx skills@latest add https://github.com/screensdesign-com/screensdesign-agent-skill/tree/v1.0.8/screensdesign-data
+```
+
+Update an installed copy:
+
+```bash
+npx skills@latest update screensdesign-data
+```
+
+</details>
+
 ## MCP registry metadata
 
-[`server.json`](server.json) describes the hosted ScreensDesign MCP server for the official MCP Registry under `com.screensdesign/screensdesign`. It includes the remote endpoint, display name, icon, and setup link. Registry metadata version `1.0.0` is maintained separately from the data-skill release.
+[`server.json`](server.json) describes the hosted ScreensDesign MCP server for the official MCP Registry under `com.screensdesign/screensdesign`. It includes the public repository, remote endpoint, display name, icon, and setup link. Registry metadata version `1.0.1` is maintained separately from the data-skill release.
+
+Changes to this file must be published to the official MCP Registry with `mcp-publisher publish` after authenticating for the `com.screensdesign` namespace. Pushing a Git branch does not update the registry. Verify the repository field and version in the [latest registry record](https://registry.modelcontextprotocol.io/v0.1/servers/com.screensdesign%2Fscreensdesign/versions/latest) after publishing.
 
 The endpoint uses browser OAuth; complete sign-in in your MCP client. This repository contains the companion skill and registry metadata. The hosted server implementation and ScreensDesign data are operated separately.
 

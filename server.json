@@ -3,8 +3,12 @@
   "name": "com.screensdesign/screensdesign",
   "title": "ScreensDesign",
   "description": "Research mobile apps, onboarding, paywalls, and competitors with real screens, flows, and reviews.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "websiteUrl": "https://screensdesign.com/mcp/",
+  "repository": {
+    "url": "https://github.com/screensdesign-com/screensdesign-agent-skill",
+    "source": "github"
+  },
   "icons": [
     {
       "src": "https://raw.githubusercontent.com/screensdesign-com/screensdesign-agent-skill/main/assets/screensdesign-icon.png",
